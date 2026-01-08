@@ -1,0 +1,31 @@
+
+> Task :compileJava FAILED
+D:\devAI\MyCar-Market\backend\src\main\java\com\mycar\market\config\SecurityConfig.java:27: error: illegal start of type
+import org.springframework.security.config.Customizer;
+^
+D:\devAI\MyCar-Market\backend\src\main\java\com\mycar\market\config\SecurityConfig.java:27: error: <identifier> expected
+import org.springframework.security.config.Customizer;
+                                                     ^
+2 errors
+
+[Incubating] Problems report is available at: file:///D:/devAI/MyCar-Market/backend/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler output below.
+  D:\devAI\MyCar-Market\backend\src\main\java\com\mycar\market\config\SecurityConfig.java:27: error: illegal start of type
+  import org.springframework.security.config.Customizer;
+  ^
+  D:\devAI\MyCar-Market\backend\src\main\java\com\mycar\market\config\SecurityConfig.java:27: error: <identifier> expected
+  import org.springframework.security.config.Customizer;
+                                                       ^
+  2 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+BUILD FAILED in 2s
+1 actionable task: 1 executed

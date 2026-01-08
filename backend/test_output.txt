@@ -1,0 +1,64 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+
+> Task :compileTestJava FAILED
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\AuthControllerTest.java:31: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+    @MockBean
+     ^
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:37: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+        @MockBean
+         ^
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:56: error: cannot find symbol
+                ObjectMapper mapper = new ObjectMapper();
+                ^
+  symbol:   class ObjectMapper
+  location: class CarControllerTest
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:56: error: cannot find symbol
+                ObjectMapper mapper = new ObjectMapper();
+                                          ^
+  symbol:   class ObjectMapper
+  location: class CarControllerTest
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\repository\CarRepositoryTest.java:72: error: incompatible types: int cannot be converted to Long
+                                .price(price)
+                                       ^
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+3 errors
+2 warnings
+
+[Incubating] Problems report is available at: file:///D:/devAI/MyCar-Market/backend/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileTestJava'.
+> Compilation failed; see the compiler output below.
+  D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\repository\CarRepositoryTest.java:72: error: incompatible types: int cannot be converted to Long
+                                  .price(price)
+                                         ^
+  D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:56: error: cannot find symbol
+                  ObjectMapper mapper = new ObjectMapper();
+                  ^
+    symbol:   class ObjectMapper
+    location: class CarControllerTest
+  D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:56: error: cannot find symbol
+                  ObjectMapper mapper = new ObjectMapper();
+                                            ^
+    symbol:   class ObjectMapper
+    location: class CarControllerTest
+  D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\AuthControllerTest.java:31: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+      @MockBean
+       ^
+  D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:37: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+          @MockBean
+           ^
+  Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+  3 errors
+  2 warnings
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+BUILD FAILED in 2s
+3 actionable tasks: 1 executed, 2 up-to-date

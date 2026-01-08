@@ -1,0 +1,55 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+
+> Task :compileTestJava
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\AuthControllerTest.java:31: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+    @MockBean
+     ^
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\AuthControllerTest.java:34: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+    @MockBean
+     ^
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:38: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+        @MockBean
+         ^
+D:\devAI\MyCar-Market\backend\src\test\java\com\mycar\market\controller\CarControllerTest.java:41: warning: [removal] MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+        @MockBean
+         ^
+4 warnings
+
+> Task :processTestResources NO-SOURCE
+> Task :testClasses
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :test
+
+CarServiceTest > 차량 등록 성공 FAILED
+    org.mockito.exceptions.misusing.UnnecessaryStubbingException at MockitoExtension.java:197
+
+2026-01-08T17:46:06.926+09:00  INFO 15968 --- [mycar-market-backend] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+
+> Task :test
+
+7 tests completed, 1 failed
+
+> Task :test FAILED
+
+[Incubating] Problems report is available at: file:///D:/devAI/MyCar-Market/backend/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///D:/devAI/MyCar-Market/backend/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 15s
+4 actionable tasks: 2 executed, 2 up-to-date
