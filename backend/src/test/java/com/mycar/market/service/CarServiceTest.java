@@ -4,7 +4,6 @@ import com.mycar.market.domain.Car;
 import com.mycar.market.domain.FuelType;
 import com.mycar.market.domain.Transmission;
 import com.mycar.market.dto.CarRequest;
-import com.mycar.market.dto.CarResponse;
 import com.mycar.market.repository.CarRepository;
 import com.mycar.market.util.ImageUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -13,75 +12,58 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CarServiceTest {
-
-    @InjectMocks
-    CarService carService;
 
     @Mock
     CarRepository carRepository;
 
     @Mock
-    ImageUtils imageUtils; // Assuming ImageUtils is a bean or we verify static mock if needed
+    ImageUtils imageUtils;
+
+    @InjectMocks
+    CarService carService;
 
     @Test
-    @DisplayName("차량 등록 성공")
-    void registerCar_Success() throws IOException {
+    @DisplayName("차량 등록 - 첫 번째 이미지가 대표 이미지로 설정됨")
+    void registerCar_FirstImageIsMain() {
         // given
         CarRequest request = new CarRequest(
-                "Tesla",
-                "Model 3",
-                2023,
-                100,
-                50000000L,
-                FuelType.ELECTRIC,
-                Transmission.AUTOMATIC,
-                false,
-                "New Car",
-                null);
+                "BMW", "X5", 2023, 10000, 80000000L,
+                FuelType.GASOLINE, Transmission.AUTOMATIC, false, "Good", Collections.emptyList());
+        MultipartFile image1 = mock(MultipartFile.class);
+        MultipartFile image2 = mock(MultipartFile.class);
+        List<MultipartFile> images = List.of(image1, image2);
 
-        MultipartFile imageFile = mock(MultipartFile.class);
-        // given(imageFile.isEmpty()).willReturn(false); // Unnecessary because
-        // ImageUtils is mocked
-        given(imageUtils.saveFile(any())).willReturn("stored-image.jpg");
+        given(imageUtils.saveFile(any())).willReturn("stored_image.jpg");
 
-        // Mock repository save
-        given(carRepository.save(any(Car.class))).willAnswer(invocation -> {
-            Car savedCar = invocation.getArgument(0);
-            // Quick hack to set ID via reflection or just spy?
-            // Better: use a mock class or just return a configured Mock object?
-            // Since method returns savedCar (arg), we can't easily change it physically
-            // unless we mock repository to return a DIFFERENT object that is equal to arg
-            // but has ID.
-            // Let's use reflection to set ID on savedCar.
-            java.lang.reflect.Field idField = Car.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(savedCar, 1L);
-            return savedCar;
-        });
+        Car savedCar = Car.builder().build();
+        ReflectionTestUtils.setField(savedCar, "id", 1L);
+        given(carRepository.save(any(Car.class))).willReturn(savedCar);
 
         // when
-        Long savedId = carService.register(request, List.of(imageFile));
+        Long carId = carService.register(request, images);
 
         // then
-        assertThat(savedId).isNotNull();
-        // Since we mocked save to return the passed car entity (which has null ID by
-        // default if not set),
-        // we might get null depending on mock.
-        // Logic: register returns savedCar.getId().
-        // In the mock answer, we updated the arg? No.
-        // We should adjust mock to return a Car with ID.
+        assertThat(carId).isEqualTo(1L);
+        verify(carRepository).save(argThat(car -> {
+            assertThat(car.getImages()).hasSize(2);
+            assertThat(car.getImages().get(0).getIsMain()).isTrue();
+            assertThat(car.getImages().get(1).getIsMain()).isFalse();
+            return true;
+        }));
     }
 }

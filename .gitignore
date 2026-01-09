@@ -1,27 +1,21 @@
-# Backend - Java/Spring
-target/
-build/
-.gradle/
-.idea/
-*.class
-.env
-*.log
+# General
+.DS_Store
+.idea
+*.txt
+
+# Backend (Spring Boot)
 backend/target/
 backend/build/
 backend/.gradle/
-backend/.idea/
+backend/out/
 backend/*.class
 backend/.env
+backend/*.log
 
-# Frontend - Node/Next.js
-node_modules/
-.next/
-.env.local
-.DS_Store
+# Frontend (Next.js)
 frontend/node_modules/
 frontend/.next/
 frontend/.env.local
-coverage/
-
-# OS
-Thumbs.db
+frontend/.env
+frontend/build/
+frontend/dist/

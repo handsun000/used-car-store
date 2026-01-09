@@ -1,91 +1,136 @@
 package com.mycar.market.controller;
 
-import com.mycar.market.domain.FuelType;
-import com.mycar.market.domain.Transmission;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mycar.market.config.SecurityConfig;
 import com.mycar.market.dto.CarRequest;
 import com.mycar.market.dto.CarResponse;
+import com.mycar.market.dto.CarSearchCondition;
+import com.mycar.market.security.JwtAuthenticationFilter;
+import com.mycar.market.security.JwtTokenProvider;
 import com.mycar.market.service.CarService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CarController.class)
-@AutoConfigureMockMvc(addFilters = false) // Disable security filters to isolate controller logic, or keep basic auth
+@Import(SecurityConfig.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class CarControllerTest {
 
         @Autowired
         MockMvc mockMvc;
 
-        @MockitoBean
+        @MockBean
         CarService carService;
 
-        @MockitoBean
-        com.mycar.market.security.JwtAuthenticationFilter jwtAuthenticationFilter;
+        @MockBean
+        JwtTokenProvider jwtTokenProvider;
 
-        @Test
-        @DisplayName("차량 등록 - ADMIN 권한 성공")
-        @WithMockUser(roles = "ADMIN")
-        void registerCar_Admin_Success() throws Exception {
-                // given
-                MockMultipartFile image = new MockMultipartFile(
-                                "images", "car.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
+        @MockBean
+        JwtAuthenticationFilter jwtAuthenticationFilter;
 
-                // CarRequest as JSON part or Param?
-                // Based on typical implementation @RequestPart("data") or @ModelAttribute
-                // Identifying CarController implementation is crucial.
-                // Assuming @RequestPart("carRequest") generic pattern or just params if
-                // implementation varies.
-                // Let's assume standard multipart request.
+        @Autowired
+        ObjectMapper objectMapper;
 
-                // Send RequestPart "car" as JSON
-                ObjectMapper mapper = new ObjectMapper();
-                CarRequest carRequest = new CarRequest(
-                                "Tesla", "Model 3", 2023, 100, 50000000L,
-                                FuelType.ELECTRIC, Transmission.AUTOMATIC, false, "New Car", null);
-                MockMultipartFile carPart = new MockMultipartFile(
-                                "car", "", MediaType.APPLICATION_JSON_VALUE, mapper.writeValueAsBytes(carRequest));
-
-                given(carService.register(any(CarRequest.class), any())).willReturn(1L);
-
-                // when & then
-                mockMvc.perform(multipart("/api/v1/cars")
-                                .file(image)
-                                .file(carPart)
-                                .with(csrf()))
-                                .andExpect(status().isCreated()); // Expect 201 Created
+        @BeforeEach
+        void setup() throws ServletException, IOException {
+                doAnswer(invocation -> {
+                        ServletRequest request = invocation.getArgument(0);
+                        ServletResponse response = invocation.getArgument(1);
+                        FilterChain chain = invocation.getArgument(2);
+                        chain.doFilter(request, response);
+                        return null;
+                }).when(jwtAuthenticationFilter).doFilter(any(), any(), any());
         }
 
         @Test
-        @DisplayName("차량 등록 - USER 권한 실패 (403 or 401 is handled by SecurityConfig, but ignoring filters here so likely 200/404/500 if not checking logic auth)")
-        @WithMockUser(roles = "USER")
+        @DisplayName("차량 등록 - ADMIN 권한 성공 (201)")
+        @WithMockUser(username = "admin", authorities = { "ROLE_ADMIN" })
+        void registerCar_Admin_Success() throws Exception {
+                // given
+                CarRequest request = new CarRequest(
+                                "BMW", "X5", 2023, 10000, 80000000L,
+                                com.mycar.market.domain.FuelType.GASOLINE,
+                                com.mycar.market.domain.Transmission.AUTOMATIC,
+                                false, "Desc", null);
+                String requestJson = objectMapper.writeValueAsString(request);
+                MockMultipartFile carPart = new MockMultipartFile("car", "", "application/json",
+                                requestJson.getBytes());
+                MockMultipartFile imagePart = new MockMultipartFile("images", "img.jpg", "image/jpeg",
+                                "data".getBytes());
+
+                given(carService.register(any(), any())).willReturn(1L);
+
+                // when & then
+                mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/cars")
+                                .file(carPart)
+                                .file(imagePart)
+                                .with(csrf()))
+                                .andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("차량 등록 - USER 권한 실패 (403)")
+        @WithMockUser(username = "user", authorities = { "ROLE_USER" })
         void registerCar_User_Fail() throws Exception {
-                // If we disabled filters (@AutoConfigureMockMvc(addFilters = false)), security
-                // is bypassed.
-                // Real security test should enable filters.
-                // However, user asked for @WebMvcTest.
-                // Typically checking Role logic inside controller methods requires
-                // PreAuthorize.
-                // If security is in SecurityConfig, we need to load that config or mock it.
-                // For simplicity in SliceTest, often we check if methods call service.
-                // To test 403, we should remove addFilters=false.
+                // given
+                CarRequest request = new CarRequest(
+                                "BMW", "X5", 2023, 10000, 80000000L,
+                                com.mycar.market.domain.FuelType.GASOLINE,
+                                com.mycar.market.domain.Transmission.AUTOMATIC,
+                                false, "Desc", null);
+                String requestJson = objectMapper.writeValueAsString(request);
+                MockMultipartFile carPart = new MockMultipartFile("car", "", "application/json",
+                                requestJson.getBytes());
+
+                // when & then
+                mockMvc.perform(multipart(HttpMethod.POST, "/api/v1/cars")
+                                .file(carPart)
+                                .with(csrf()))
+                                .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("차량 검색 - 정상 조회 (200)")
+        @WithMockUser
+        void searchCars_Success() throws Exception {
+                // given
+                CarResponse response = new CarResponse(
+                                1L, "BMW", "X5", 2023, 10000, 80000000L, null, null, false, null, null,
+                                Collections.emptyList(), null, null);
+                given(carService.searchCars(any(CarSearchCondition.class))).willReturn(List.of(response));
+
+                // when & then
+                mockMvc.perform(get("/api/v1/cars/search")
+                                .param("brand", "BMW")
+                                .param("minPrice", "1000"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].brand").value("BMW"));
         }
 }

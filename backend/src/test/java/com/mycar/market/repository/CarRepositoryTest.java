@@ -65,6 +65,41 @@ class CarRepositoryTest {
                 assertThat(result.get(0).modelName()).isEqualTo("Sonata");
         }
 
+        @Test
+        @DisplayName("차량 검색 - 복합 조건 Verified (브랜드 + 가격 + 연료)")
+        void searchByComplexConditions() {
+                // given
+                Car targetCar = createCar("BMW", "X5", 85000000); // Target
+                Car wrongBrand = createCar("Audi", "X5", 85000000);
+                Car wrongPrice = createCar("BMW", "X5", 95000000);
+                Car wrongFuel = Car.builder()
+                                .brand("BMW")
+                                .modelName("X5")
+                                .price(85000000L)
+                                .productionYear(2023)
+                                .mileage(10000)
+                                .fuelType(FuelType.DIESEL) // Wrong fuel
+                                .transmission(Transmission.AUTOMATIC)
+                                .accidentHistory(false)
+                                .build();
+
+                carRepository.save(targetCar);
+                carRepository.save(wrongBrand);
+                carRepository.save(wrongPrice);
+                carRepository.save(wrongFuel);
+
+                CarSearchCondition condition = new CarSearchCondition(
+                                "BMW", null, 80000000L, 90000000L, null, null, null, null, FuelType.GASOLINE, null);
+
+                // when
+                List<CarResponse> result = carRepository.searchCars(condition);
+
+                // then
+                assertThat(result).hasSize(1);
+                assertThat(result.get(0).brand()).isEqualTo("BMW");
+                assertThat(result.get(0).price()).isEqualTo(85000000L);
+        }
+
         private Car createCar(String brand, String model, int price) {
                 return Car.builder()
                                 .brand(brand)

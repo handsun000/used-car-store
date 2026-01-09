@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/cars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/cars/**").hasAuthority(Role.ROLE_ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                        .requestMatchers("/images/**").permitAll() // Allow static images
                         .requestMatchers("/h2-console/**").permitAll() // Allow H2 console
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Explicitly permit OPTIONS
                         .anyRequest().authenticated())
