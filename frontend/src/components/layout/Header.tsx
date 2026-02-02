@@ -8,6 +8,24 @@ export default function Header() {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Initial check
+        handleScroll();
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         // Check for token on mount
@@ -46,15 +64,32 @@ export default function Header() {
         router.refresh(); // Refresh to update any server components if needed
     };
 
+    // Style classes based on scroll state
+    const headerClass = isScrolled
+        ? "fixed top-0 w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur shadow-md text-gray-900 border-b border-gray-200"
+        : "fixed top-0 w-full z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10";
+
+    const logoClass = isScrolled
+        ? "text-blue-900"
+        : "text-white";
+
+    const logoAccentClass = isScrolled
+        ? "text-blue-500"
+        : "text-white/80";
+
+    const navLinkClass = isScrolled
+        ? "text-gray-600 hover:text-blue-600"
+        : "text-white/90 hover:text-white";
+
     return (
-        <header className="bg-white border-b sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <Link href="/" className="text-2xl font-bold text-blue-900 tracking-tight">
-                    MyCar<span className="text-blue-500">Market</span>
+        <header className={headerClass}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <Link href="/" className={`text-2xl font-bold tracking-tight ${logoClass}`}>
+                    MyCar<span className={logoAccentClass}>Market</span>
                 </Link>
                 <nav className="hidden md:flex space-x-8">
                     {/* Public Menu - ONLY Community and standard Logo link */}
-                    <Link href="/community" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                    <Link href="/community" className={`font-medium transition-colors ${navLinkClass}`}>
                         커뮤니티
                     </Link>
                 </nav>
@@ -63,7 +98,7 @@ export default function Header() {
                     {isLoggedIn && isAdmin && (
                         <Link
                             href="/admin/register"
-                            className="text-blue-600 border border-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50 font-medium text-sm transition-colors"
+                            className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-colors border ${isScrolled ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
                         >
                             매물 등록
                         </Link>
@@ -71,24 +106,24 @@ export default function Header() {
 
                     {isLoggedIn ? (
                         <>
-                            <Link href="/mypage" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                            <Link href="/mypage" className={`font-medium transition-colors ${navLinkClass}`}>
                                 마이페이지
                             </Link>
                             <button
                                 onClick={handleLogout}
-                                className="text-gray-500 hover:text-gray-900 font-medium"
+                                className={`font-medium ${isScrolled ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}
                             >
                                 로그아웃
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link href="/login" className="text-gray-500 hover:text-gray-900 font-medium">
+                            <Link href="/login" className={`font-medium ${isScrolled ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}>
                                 로그인
                             </Link>
                             <Link
                                 href="/signup"
-                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                                className={`px-4 py-2 rounded-lg font-medium transition ${isScrolled ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-900 hover:bg-gray-100'}`}
                             >
                                 회원가입
                             </Link>

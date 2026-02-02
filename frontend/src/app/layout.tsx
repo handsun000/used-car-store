@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
+import PageContainer from '@/components/layout/PageContainer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,10 +22,10 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen flex flex-col bg-gray-50`}>
         <Header />
 
-        {/* Main Content */}
-        <main className="flex-grow">
+        {/* Main Content with smart padding */}
+        <PageContainer>
           {children}
-        </main>
+        </PageContainer>
 
         {/* Footer */}
         <footer className="bg-gray-900 text-gray-400 py-12">
@@ -61,3 +62,4 @@ export default function RootLayout({
     </html>
   );
 }
+
