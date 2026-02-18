@@ -19,6 +19,8 @@ export default function LoginPage() {
         try {
             const response = await login({ email, password });
             localStorage.setItem('accessToken', response.accessToken);
+            // Dispatch custom event for Navbar sync
+            window.dispatchEvent(new Event('auth-change'));
             router.push('/');
         } catch (err: any) {
             console.error('Login error:', err);

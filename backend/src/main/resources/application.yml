@@ -31,4 +31,4 @@ jwt:
   expiration: 86400000 # 1 day
 
 file:
-  upload-dir: d:/devAI/uploads/
+  upload-dir: c:/Users/82108/IdeaProjects/used-car-store/backend/uploads/

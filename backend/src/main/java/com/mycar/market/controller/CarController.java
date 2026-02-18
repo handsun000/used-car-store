@@ -24,7 +24,7 @@ public class CarController {
 
     @PostMapping
     public ResponseEntity<Void> register(
-            @RequestPart("car") @Valid CarRequest request,
+            @RequestPart("carRequest") @Valid CarRequest request,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         Long id = carService.register(request, images);
         return ResponseEntity.created(URI.create("/api/v1/cars/" + id)).build();

@@ -7,11 +7,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @org.springframework.beans.factory.annotation.Value("${file.upload-dir}")
+    private String uploadDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Map /images/** URL path to d:/devAI/uploads/ directory
-        // Note: The 'file:///' prefix is required for local file system paths
+        // Map /images/** URL path to the upload directory
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///d:/devAI/uploads/");
+                .addResourceLocations("file:///" + uploadDir);
     }
 }

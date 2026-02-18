@@ -4,9 +4,9 @@ import { CarRequest, CarResponse, CarSearchCondition } from '@/types';
 export const registerCar = async (data: CarRequest, images: File[]) => {
     const formData = new FormData();
 
-    // 'car' part as JSON
+    // 'carRequest' part as JSON
     const carBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    formData.append('car', carBlob);
+    formData.append('carRequest', carBlob);
 
     // 'images' part as Files
     images.forEach((image) => {

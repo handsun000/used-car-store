@@ -85,57 +85,57 @@ export default function RegisterCarPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8 text-gray-900">차량 매물 등록</h1>
+        <div className="max-w-4xl mx-auto px-4 py-8 pt-24">
+            <h1 className="text-3xl font-bold mb-8 text-white">차량 매물 등록</h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">제조사 (Brand)</label>
+                        <label className="block text-sm font-bold text-white mb-1">제조사 (Brand)</label>
                         <input
                             type="text"
                             name="brand"
                             required
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                             placeholder="예: Hyundai, BMW"
                             value={formData.brand}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">모델명 (Model)</label>
+                        <label className="block text-sm font-bold text-white mb-1">모델명 (Model)</label>
                         <input
                             type="text"
                             name="modelName"
                             required
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                             placeholder="예: Sonata, 520d"
                             value={formData.modelName}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">연식 (Year)</label>
+                        <label className="block text-sm font-bold text-white mb-1">연식 (Year)</label>
                         <input
                             type="number"
                             name="productionYear"
                             required
                             min="1900"
                             max={new Date().getFullYear() + 1}
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                             value={formData.productionYear}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">주행거리 (km)</label>
+                        <label className="block text-sm font-bold text-white mb-1">주행거리 (km)</label>
                         <input
                             type="number"
                             name="mileage"
                             required
                             min="0"
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                             value={formData.mileage}
                             onChange={handleInputChange}
                         />
@@ -145,13 +145,13 @@ export default function RegisterCarPage() {
                 {/* Price & Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">가격 (만원)</label>
+                        <label className="block text-sm font-bold text-white mb-1">가격 (만원)</label>
                         <input
                             type="number"
                             name="price"
                             required
                             min="0"
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                             value={formData.price}
                             onChange={handleInputChange}
                         />
@@ -161,11 +161,11 @@ export default function RegisterCarPage() {
                             type="checkbox"
                             name="accidentHistory"
                             id="accidentHistory"
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 bg-white"
                             checked={formData.accidentHistory}
                             onChange={handleInputChange}
                         />
-                        <label htmlFor="accidentHistory" className="ml-2 block text-sm text-gray-900">
+                        <label htmlFor="accidentHistory" className="ml-2 block text-sm text-white font-bold">
                             사고 이력 있음 (Accident History)
                         </label>
                     </div>
@@ -174,10 +174,10 @@ export default function RegisterCarPage() {
                 {/* Specs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">연료 (Fuel)</label>
+                        <label className="block text-sm font-bold text-white mb-1">연료 (Fuel)</label>
                         <select
                             name="fuelType"
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black"
                             value={formData.fuelType}
                             onChange={handleInputChange}
                         >
@@ -188,10 +188,10 @@ export default function RegisterCarPage() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">변속기 (Transmission)</label>
+                        <label className="block text-sm font-bold text-white mb-1">변속기 (Transmission)</label>
                         <select
                             name="transmission"
-                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black"
                             value={formData.transmission}
                             onChange={handleInputChange}
                         >
@@ -203,12 +203,12 @@ export default function RegisterCarPage() {
 
                 {/* Description */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">차량 설명</label>
+                    <label className="block text-sm font-bold text-white mb-1">차량 설명</label>
                     <textarea
                         name="description"
                         rows={4}
                         required
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-black placeholder:text-gray-500"
                         placeholder="차량 상세 설명을 입력하세요..."
                         value={formData.description}
                         onChange={handleInputChange}
@@ -217,11 +217,11 @@ export default function RegisterCarPage() {
 
                 {/* Image Upload */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">차량 이미지</label>
+                    <label className="block text-sm font-bold text-white mb-2">차량 이미지</label>
 
                     <div className="flex flex-wrap gap-4 mb-4">
                         {previewUrls.map((url, idx) => (
-                            <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+                            <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-600">
                                 <img src={url} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
                                 <button
                                     type="button"
@@ -233,9 +233,9 @@ export default function RegisterCarPage() {
                             </div>
                         ))}
 
-                        <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 bg-white">
+                        <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-500 rounded-lg cursor-pointer hover:bg-gray-700 bg-gray-800 transition-colors">
                             <span className="text-2xl text-gray-400">+</span>
-                            <span className="text-xs text-gray-500 mt-1">추가</span>
+                            <span className="text-xs text-gray-400 mt-1">추가</span>
                             <input
                                 type="file"
                                 className="hidden"
@@ -245,7 +245,7 @@ export default function RegisterCarPage() {
                             />
                         </label>
                     </div>
-                    <p className="text-xs text-gray-500">* 첫 번째 이미지가 대표 이미지가 됩니다.</p>
+                    <p className="text-xs text-gray-400">* 첫 번째 이미지가 대표 이미지가 됩니다.</p>
                 </div>
 
                 {/* Submit Button */}
@@ -260,6 +260,5 @@ export default function RegisterCarPage() {
                     </button>
                 </div>
             </form>
-        </div>
-    );
+        </div>);
 }

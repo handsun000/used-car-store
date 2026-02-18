@@ -11,6 +11,7 @@ export default function HomePage() {
   const [cars, setCars] = useState<CarResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   // Search State
   const [condition, setCondition] = useState<CarSearchCondition>({
@@ -79,10 +80,10 @@ export default function HomePage() {
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
           autoPlay
           loop
-          muted
+          muted={isMuted}
           playsInline
         >
-          <source src="https://cdn.pixabay.com/video/2024/05/03/210309-940256586_large.mp4" type="video/mp4" />
+          <source src="/videos/중고차%20홍보%20영상1.mp4" type="video/mp4" />
           {/* Fallback pattern if video fails or while loading */}
           <div className="w-full h-full bg-gray-900" />
         </video>
@@ -90,21 +91,9 @@ export default function HomePage() {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/30 z-10" />
 
-        {/* Hero Content */}
+        {/* Hero Content - Removed as requested */}
         <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-5xl md:text-7xl font-bold text-white tracking-widest mb-6 opacity-0 animate-fade-in-up" style={{ animation: 'fadeInUp 1s ease-out forwards' }}>
-            The New Experience
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-200 font-light mb-12 tracking-wide opacity-0 animate-fade-in-up" style={{ animation: 'fadeInUp 1s ease-out 0.3s forwards' }}>
-            진보하는 드라이빙, MyCar Market
-          </p>
-          <button
-            onClick={scrollToContent}
-            className="px-10 py-4 bg-transparent border border-white text-white text-sm md:text-base font-medium tracking-widest hover:bg-white hover:text-black transition-all duration-300 uppercase opacity-0 animate-fade-in-up"
-            style={{ animation: 'fadeInUp 1s ease-out 0.6s forwards' }}
-          >
-            매물 보러가기
-          </button>
+          {/* Text and buttons removed to show only video */}
         </div>
 
         {/* Scroll Indicator */}
@@ -112,6 +101,25 @@ export default function HomePage() {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
+        </div>
+
+        {/* Sound Control */}
+        <div className="absolute bottom-10 right-10 z-30">
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className="p-3 bg-black/30 backdrop-blur-md rounded-full text-white hover:bg-black/50 transition-all border border-white/20"
+          >
+            {isMuted ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              </svg>
+            )}
+          </button>
         </div>
       </section>
 

@@ -28,38 +28,48 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        // Check for token on mount
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-            setIsLoggedIn(true);
-            try {
-                // Determine if user is admin by decoding JWT payload
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
+        const checkAuth = () => {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                setIsLoggedIn(true);
+                try {
+                    // Determine if user is admin by decoding JWT payload
+                    const base64Url = token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
 
-                const payload = JSON.parse(jsonPayload);
-                const authorities = payload.auth || '';
+                    const payload = JSON.parse(jsonPayload);
+                    const authorities = payload.auth || '';
 
-                if (authorities.includes('ROLE_ADMIN')) {
-                    setIsAdmin(true);
+                    if (authorities.includes('ROLE_ADMIN')) {
+                        setIsAdmin(true);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse token', e);
+                    // If token is invalid, we might want to logout, but for now just ignore role
                 }
-            } catch (e) {
-                console.error('Failed to parse token', e);
-                // If token is invalid, we might want to logout, but for now just ignore role
+            } else {
+                setIsLoggedIn(false);
+                setIsAdmin(false);
             }
-        } else {
-            setIsLoggedIn(false);
-            setIsAdmin(false);
-        }
+        };
+
+        // Check for token on mount
+        checkAuth();
+
+        // Listen for custom auth-change event
+        window.addEventListener('auth-change', checkAuth);
+
+        return () => window.removeEventListener('auth-change', checkAuth);
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         setIsLoggedIn(false);
         setIsAdmin(false);
+        window.dispatchEvent(new Event('auth-change'));
         router.push('/');
         router.refresh(); // Refresh to update any server components if needed
     };
