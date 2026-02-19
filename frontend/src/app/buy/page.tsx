@@ -76,7 +76,7 @@ export default function BuyPage() {
                 {/* Modern Minimal Search Filter */}
                 <div className="mb-20 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold mb-8 tracking-tight text-gray-900">Find Your Model</h2>
-                    <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 items-end">
+                    <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-6 items-end">
 
                         <div className="flex flex-col group">
                             <label className="text-xs text-gray-500 uppercase tracking-widest mb-2 font-semibold group-focus-within:text-black transition-colors">Brand</label>
@@ -124,7 +124,7 @@ export default function BuyPage() {
 
                         <button
                             type="submit"
-                            className="w-full bg-black text-white py-4 px-6 hover:bg-gray-800 transition-colors uppercase tracking-widest text-sm font-bold rounded-lg shadow-md"
+                            className="w-full bg-black text-white py-4 px-6 hover:bg-gray-800 transition-colors uppercase tracking-widest text-sm font-bold rounded-lg shadow-md md:col-span-2 lg:col-span-1"
                         >
                             Search
                         </button>

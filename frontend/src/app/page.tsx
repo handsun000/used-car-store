@@ -10,7 +10,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-black font-sans text-white overflow-hidden">
 
       {/* Hero Section */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-80"
           autoPlay
