@@ -88,7 +88,7 @@ export default function CarDetailPage() {
                             <div className="aspect-w-4 aspect-h-3 w-full bg-white rounded-xl overflow-hidden shadow-sm mb-4 relative">
                                 {selectedImage ? (
                                     <img
-                                        src={`http://localhost:8080/images/${selectedImage}`}
+                                        src={selectedImage}
                                         alt={`${car.brand} ${car.modelName}`}
                                         className="w-full h-full object-contain"
                                         onError={(e) => {
@@ -120,7 +120,7 @@ export default function CarDetailPage() {
                                                 }`}
                                         >
                                             <img
-                                                src={`http://localhost:8080/images/${img}`}
+                                                src={img}
                                                 alt={`Thumbnail ${idx + 1}`}
                                                 className="w-full h-full object-cover"
                                             />

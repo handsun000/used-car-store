@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Header() {
     const router = useRouter();
+    const pathname = usePathname();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -75,19 +76,22 @@ export default function Header() {
     };
 
     // Style classes based on scroll state
-    const headerClass = isScrolled
+    const isMainPage = pathname === '/';
+    const showWhiteBackground = !isMainPage || isScrolled;
+
+    const headerClass = showWhiteBackground
         ? "fixed top-0 w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur shadow-md text-gray-900 border-b border-gray-200"
         : "fixed top-0 w-full z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10";
 
-    const logoClass = isScrolled
+    const logoClass = showWhiteBackground
         ? "text-blue-900"
         : "text-white";
 
-    const logoAccentClass = isScrolled
+    const logoAccentClass = showWhiteBackground
         ? "text-blue-500"
         : "text-white/80";
 
-    const navLinkClass = isScrolled
+    const navLinkClass = showWhiteBackground
         ? "text-gray-600 hover:text-blue-600"
         : "text-white/90 hover:text-white";
 
@@ -98,7 +102,10 @@ export default function Header() {
                     MyCar<span className={logoAccentClass}>Market</span>
                 </Link>
                 <nav className="hidden md:flex space-x-8">
-                    {/* Public Menu - ONLY Community and standard Logo link */}
+                    {/* Public Menu */}
+                    <Link href="/buy" className={`font-medium transition-colors ${navLinkClass}`}>
+                        내차사기
+                    </Link>
                     <Link href="/community" className={`font-medium transition-colors ${navLinkClass}`}>
                         커뮤니티
                     </Link>
@@ -108,7 +115,7 @@ export default function Header() {
                     {isLoggedIn && isAdmin && (
                         <Link
                             href="/admin/register"
-                            className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-colors border ${isScrolled ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
+                            className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-colors border ${showWhiteBackground ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
                         >
                             매물 등록
                         </Link>
@@ -121,19 +128,19 @@ export default function Header() {
                             </Link>
                             <button
                                 onClick={handleLogout}
-                                className={`font-medium ${isScrolled ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}
+                                className={`font-medium ${showWhiteBackground ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}
                             >
                                 로그아웃
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link href="/login" className={`font-medium ${isScrolled ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}>
+                            <Link href="/login" className={`font-medium ${showWhiteBackground ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}>
                                 로그인
                             </Link>
                             <Link
                                 href="/signup"
-                                className={`px-4 py-2 rounded-lg font-medium transition ${isScrolled ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-900 hover:bg-gray-100'}`}
+                                className={`px-4 py-2 rounded-lg font-medium transition ${showWhiteBackground ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-900 hover:bg-gray-100'}`}
                             >
                                 회원가입
                             </Link>

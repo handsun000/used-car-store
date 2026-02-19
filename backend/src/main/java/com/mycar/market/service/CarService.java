@@ -19,7 +19,7 @@ import java.util.List;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final com.mycar.market.util.ImageUtils imageUtils;
+    private final ImageUploadService imageUploadService;
 
     @Transactional
     public Long register(CarRequest request, List<MultipartFile> images) {
@@ -29,15 +29,17 @@ public class CarService {
             boolean isFirstImage = true; // 첫 번째 이미지인지 체크하는 플래그
 
             for (MultipartFile file : images) {
-                String storedFileName = imageUtils.saveFile(file);
-                if (storedFileName != null) {
+                // Cloudinary에 업로드하고 URL 반환 (예: https://res.cloudinary.com/...)
+                String storedUrl = imageUploadService.uploadImage(file);
+
+                if (storedUrl != null) {
                     com.mycar.market.domain.CarImage carImage = com.mycar.market.domain.CarImage.builder()
-                            .url(storedFileName)
-                            .isMain(isFirstImage) // 첫 번째 사진이면 true, 아니면 false
+                            .url(storedUrl) // 이제 전체 URL이 저장됨
+                            .isMain(isFirstImage)
                             .build();
                     car.addImage(carImage);
 
-                    isFirstImage = false; // 다음 사진부터는 false
+                    isFirstImage = false;
                 }
             }
         }

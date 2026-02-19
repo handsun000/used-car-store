@@ -19,7 +19,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-gray-50`}>
+      {/* Force light mode styles: bg-white for background, text-gray-900 for text */}
+      <body className={`${inter.className} min-h-screen flex flex-col bg-white text-gray-900`}>
         <Header />
 
         {/* Main Content with smart padding */}
@@ -62,4 +63,3 @@ export default function RootLayout({
     </html>
   );
 }
-
