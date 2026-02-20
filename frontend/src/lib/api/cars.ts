@@ -23,8 +23,19 @@ export const registerCar = async (data: CarRequest, images: File[]) => {
 };
 
 export const searchCars = async (condition: CarSearchCondition): Promise<CarResponse[]> => {
+    const params = new URLSearchParams();
+    Object.entries(condition).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else {
+                params.append(key, String(value));
+            }
+        }
+    });
+
     const response = await api.get<CarResponse[]>('/cars/search', {
-        params: condition,
+        params,
     });
     return response.data;
 };

@@ -11,8 +11,9 @@ interface CarFormProps {
 }
 
 export default function CarForm({ initialData, onSubmit, isLoading, buttonText }: CarFormProps) {
-    const [images, setImages] = useState<File[]>([]);
-    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    const [newImages, setNewImages] = useState<File[]>([]);
+    const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+    const [existingImages, setExistingImages] = useState<string[]>([]);
 
     // Form State
     const [formData, setFormData] = useState<CarRequest>({
@@ -32,10 +33,11 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
         if (initialData) {
             setFormData(initialData);
             if (initialData.imageUrls) {
-                setPreviewUrls(initialData.imageUrls);
+                setExistingImages(initialData.imageUrls);
             }
         }
-    }, [initialData]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only run once on mount to avoid re-initializing on parent re-renders when form submits
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -55,91 +57,94 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
-            setImages(prev => [...prev, ...files]);
+            setNewImages(prev => [...prev, ...files]);
 
             // Create preview URLs
             const newPreviews = files.map(file => URL.createObjectURL(file));
-            setPreviewUrls(prev => [...prev, ...newPreviews]);
+            setNewImagePreviews(prev => [...prev, ...newPreviews]);
         }
     };
 
-    const removeImage = (index: number) => {
-        // If removing an existing image (from initialData), we just remove it from preview.
-        // Handling logic for deleting existing images on server is complex, currently we just support adding new ones for simplicity or replacing.
-        // However, for pure UI, we update the preview list.
-        setPreviewUrls(prev => prev.filter((_, i) => i !== index));
-        setImages(prev => prev.filter((_, i) => {
-            // Adjust index if mixed with existing images... 
-            // Simplified: We assumes added images are appended. 
-            // If we remove an image that was just added, we remove it from `images`.
-            // If we remove an initial image, `images` array might not have it.
-            // Complex logic needed for full support. For now, simplifed:
-            return i !== index; // This is buggy if mixing initial valid URLs with File objects.
-        }));
+    const removeExistingImage = (index: number) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const removeNewImage = (index: number) => {
+        setNewImages(prev => prev.filter((_, i) => i !== index));
+        setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation: If no initial images and no new images, alert.
-        const totalImages = (initialData?.imageUrls?.length || 0) + images.length;
-        if (previewUrls.length === 0) { // Using previewUrls as proxy for total visible images
+        // Validation: If no images at all
+        if (existingImages.length === 0 && newImages.length === 0) {
             alert('최소 1장의 이미지를 등록해주세요.');
             return;
         }
 
-        await onSubmit(formData, images);
+        // Update formData with the potentially modified existingImages list
+        const finalFormData = {
+            ...formData,
+            imageUrls: existingImages
+        };
+
+        await onSubmit(finalFormData, newImages);
     };
+
+    // Style classes
+    const inputClass = "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400 transition-all duration-200";
+    const labelClass = "block text-sm font-bold text-gray-700 mb-1";
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">제조사 (Brand)</label>
+                    <label className={labelClass}>제조사 (Brand)</label>
                     <input
                         type="text"
                         name="brand"
                         required
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                        className={inputClass}
                         placeholder="예: Hyundai, BMW"
                         value={formData.brand}
                         onChange={handleInputChange}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">모델명 (Model)</label>
+                    <label className={labelClass}>모델명 (Model)</label>
                     <input
                         type="text"
                         name="modelName"
                         required
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                        className={inputClass}
                         placeholder="예: Sonata, 520d"
                         value={formData.modelName}
                         onChange={handleInputChange}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">연식 (Year)</label>
+                    <label className={labelClass}>연식 (Year)</label>
                     <input
                         type="number"
                         name="productionYear"
                         required
                         min="1900"
                         max={new Date().getFullYear() + 1}
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                        className={inputClass}
                         value={formData.productionYear}
                         onChange={handleInputChange}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">주행거리 (km)</label>
+                    <label className={labelClass}>주행거리 (km)</label>
                     <input
                         type="number"
                         name="mileage"
                         required
                         min="0"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                        className={inputClass}
                         value={formData.mileage}
                         onChange={handleInputChange}
                     />
@@ -149,13 +154,13 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
             {/* Price & Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">가격 (만원)</label>
+                    <label className={labelClass}>가격 (만원)</label>
                     <input
                         type="number"
                         name="price"
                         required
                         min="0"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                        className={inputClass}
                         value={formData.price}
                         onChange={handleInputChange}
                     />
@@ -165,11 +170,11 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
                         type="checkbox"
                         name="accidentHistory"
                         id="accidentHistory"
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 bg-white"
+                        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 bg-white cursor-pointer transition-transform duration-200 checked:scale-105"
                         checked={formData.accidentHistory}
                         onChange={handleInputChange}
                     />
-                    <label htmlFor="accidentHistory" className="ml-2 block text-sm text-gray-700 font-bold">
+                    <label htmlFor="accidentHistory" className="ml-2 block text-sm text-gray-700 font-bold cursor-pointer hover:text-blue-600 transition-colors">
                         사고 이력 있음 (Accident History)
                     </label>
                 </div>
@@ -178,10 +183,10 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
             {/* Specs */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">연료 (Fuel)</label>
+                    <label className={labelClass}>연료 (Fuel)</label>
                     <select
                         name="fuelType"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900"
+                        className={inputClass}
                         value={formData.fuelType}
                         onChange={handleInputChange}
                     >
@@ -192,10 +197,10 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">변속기 (Transmission)</label>
+                    <label className={labelClass}>변속기 (Transmission)</label>
                     <select
                         name="transmission"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900"
+                        className={inputClass}
                         value={formData.transmission}
                         onChange={handleInputChange}
                     >
@@ -207,12 +212,12 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
 
             {/* Description */}
             <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">차량 설명</label>
+                <label className={labelClass}>차량 설명</label>
                 <textarea
                     name="description"
                     rows={4}
                     required
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400"
+                    className={inputClass}
                     placeholder="차량 상세 설명을 입력하세요..."
                     value={formData.description}
                     onChange={handleInputChange}
@@ -221,20 +226,44 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
 
             {/* Image Upload */}
             <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">차량 이미지</label>
+                <label className={labelClass + " mb-2"}>차량 이미지</label>
 
                 <div className="flex flex-wrap gap-4 mb-4">
-                    {previewUrls.map((url, idx) => (
-                        <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
-                            <img src={url} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                            {/* Deletion disabled for now for simplicity in MVP edit */}
-                            {/* <button type="button" onClick={() => removeImage(idx)} ...>삭제</button> */}
+                    {/* Existing Images */}
+                    {existingImages.map((url, idx) => (
+                        <div key={`existing-${idx}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group">
+                            <img src={url} alt={`Existing ${idx}`} className="w-full h-full object-cover" />
+                            <button
+                                type="button"
+                                onClick={() => removeExistingImage(idx)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                title="이미지 삭제"
+                            >
+                                &times;
+                            </button>
+                            <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] px-1 text-center truncate">기존</span>
                         </div>
                     ))}
 
-                    <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 bg-gray-50 transition-colors">
-                        <span className="text-2xl text-gray-400">+</span>
-                        <span className="text-xs text-gray-500 mt-1">추가</span>
+                    {/* New Images */}
+                    {newImagePreviews.map((url, idx) => (
+                        <div key={`new-${idx}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-blue-200 ring-2 ring-blue-100 group">
+                            <img src={url} alt={`New ${idx}`} className="w-full h-full object-cover" />
+                            <button
+                                type="button"
+                                onClick={() => removeNewImage(idx)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                title="이미지 삭제"
+                            >
+                                &times;
+                            </button>
+                            <span className="absolute bottom-0 left-0 right-0 bg-blue-500/70 text-white text-[10px] px-1 text-center truncate">신규</span>
+                        </div>
+                    ))}
+
+                    <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-blue-400 bg-gray-50 transition-all duration-200 group">
+                        <span className="text-2xl text-gray-400 group-hover:text-blue-500 transition-colors">+</span>
+                        <span className="text-xs text-gray-500 mt-1 group-hover:text-blue-600 transition-colors">추가</span>
                         <input
                             type="file"
                             className="hidden"
@@ -252,7 +281,7 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
                         }`}
                 >
                     {isLoading ? '처리 중...' : buttonText}

@@ -24,7 +24,9 @@ export default function BuyPage() {
     const fetchCars = async () => {
         setIsLoading(true);
         try {
-            const validCondition: CarSearchCondition = {};
+            const validCondition: CarSearchCondition = {
+                statuses: ['FOR_SALE', 'RESERVED']
+            };
             if (condition.brand) validCondition.brand = condition.brand;
             if (condition.modelName) validCondition.modelName = condition.modelName;
             if (condition.minPrice) validCondition.minPrice = condition.minPrice;
