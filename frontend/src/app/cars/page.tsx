@@ -10,7 +10,7 @@ export default async function CarsPage({
     searchParams: { [key: string]: string | string[] | undefined };
 }) {
     // In a real app, parse searchParams to CarSearchCondition
-    const cars = await fetchCars();
+    const cars = await fetchCars({ statuses: ['FOR_SALE', 'RESERVED'] });
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

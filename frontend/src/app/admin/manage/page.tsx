@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchCars, updateCarStatus, deleteCar, updateCar } from '@/lib/api';
-import { CarResponse, CarRequest } from '@/types';
+import { CarResponse, CarRequest, CarStatus } from '@/types';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import CarForm from '@/components/CarForm';
 
@@ -35,12 +35,11 @@ export default function AdminManagePage() {
         loadCars();
     }, []);
 
-    const handleStatusToggle = async (car: CarResponse) => {
+    const handleStatusChange = async (car: CarResponse, newStatus: CarStatus) => {
         try {
-            const newStatus = car.status === 'FOR_SALE' ? 'SOLD' : 'FOR_SALE';
             await updateCarStatus(car.id, newStatus);
-            // Optimistic update or reload
-            setCars(prev => prev.map(c => c.id === car.id ? { ...c, status: newStatus as any } : c)); // Type casting for simple string match
+            // Optimistic update
+            setCars(prev => prev.map(c => c.id === car.id ? { ...c, status: newStatus } : c));
         } catch (error) {
             console.error('Status update failed:', error);
             alert('상태 변경에 실패했습니다.');
@@ -103,7 +102,7 @@ export default function AdminManagePage() {
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 pt-24">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-100">매물 관리 (Admin Dashboard)</h1>
+                <h1 className="text-3xl font-bold text-gray-900">매물 관리 (Admin Dashboard)</h1>
                 <a href="/admin/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
                     + 매물 등록
                 </a>
@@ -128,9 +127,9 @@ export default function AdminManagePage() {
                                     <td className="px-6 py-4">
                                         <div className="w-20 h-14 rounded-md overflow-hidden bg-gray-200">
                                             {car.images && car.images.length > 0 ? (
-                                                <img src={car.images[0].url} alt={car.modelName} className="w-full h-full object-cover" />
+                                                <img src={car.images[0]} alt={car.modelName} className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                                                <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">No Image</div>
                                             )}
                                         </div>
                                     </td>
@@ -146,15 +145,18 @@ export default function AdminManagePage() {
                                         {car.price.toLocaleString()} 만원
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button
-                                            onClick={() => handleStatusToggle(car)}
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border ${car.status === 'FOR_SALE'
-                                                    ? 'bg-green-100 text-green-800 border-green-200'
-                                                    : 'bg-red-100 text-red-800 border-red-200'
-                                                } transition-colors hover:opacity-80`}
+                                        <select
+                                            value={car.status}
+                                            onChange={(e) => handleStatusChange(car, e.target.value as any)}
+                                            className={`block w-full pl-3 pr-10 py-2 text-xs font-bold border rounded-md sm:text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 ${car.status === 'FOR_SALE' ? 'bg-green-100 text-green-800 border-green-200' :
+                                                car.status === 'RESERVED' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                                    'bg-red-100 text-red-800 border-red-200'
+                                                }`}
                                         >
-                                            {car.status === 'FOR_SALE' ? '판매중 (For Sale)' : '판매완료 (Sold)'}
-                                        </button>
+                                            <option value="FOR_SALE" className="bg-white text-gray-900">판매중</option>
+                                            <option value="RESERVED" className="bg-white text-gray-900">예약중</option>
+                                            <option value="SOLD" className="bg-white text-gray-900">판매완료</option>
+                                        </select>
                                     </td>
                                     <td className="px-6 py-4 text-right space-x-2">
                                         <button
@@ -186,7 +188,7 @@ export default function AdminManagePage() {
 
             {/* Edit Modal */}
             {isEditModalOpen && editingCar && (
-                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-70 p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-all duration-300">
                     <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
                         <div className="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
                             <h2 className="text-2xl font-bold text-gray-900">매물 수정</h2>
@@ -206,7 +208,7 @@ export default function AdminManagePage() {
                                     transmission: editingCar.transmission,
                                     accidentHistory: editingCar.accidentHistory,
                                     description: editingCar.description,
-                                    imageUrls: editingCar.images.map(img => img.url)
+                                    imageUrls: editingCar.images
                                 }}
                                 onSubmit={handleEditSubmit}
                                 isLoading={isUpdating}

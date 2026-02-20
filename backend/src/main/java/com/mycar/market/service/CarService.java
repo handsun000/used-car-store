@@ -76,20 +76,21 @@ public class CarService {
                 request.accidentHistory(),
                 request.description());
 
-        // 2. 이미지 처리 (단순화: 기존 이미지 유지 + 새 이미지 추가)
-        // 실제로는 기존 이미지를 삭제하거나 순서를 바꾸는 로직이 필요할 수 있음
+        // 2. 이미지 처리 (Sync logic)
+        List<com.mycar.market.domain.CarImage> newCarImages = new java.util.ArrayList<>();
         if (newImages != null && !newImages.isEmpty()) {
             for (MultipartFile file : newImages) {
                 String storedUrl = imageUploadService.uploadImage(file);
                 if (storedUrl != null) {
-                    com.mycar.market.domain.CarImage carImage = com.mycar.market.domain.CarImage.builder()
+                    newCarImages.add(com.mycar.market.domain.CarImage.builder()
                             .url(storedUrl)
-                            .isMain(false) // 추가된 이미지는 메인이 아님 (기존 메인 유지)
-                            .build();
-                    car.addImage(carImage);
+                            .isMain(false) // New images are appended
+                            .build());
                 }
             }
         }
+
+        car.updateImages(request.imageUrls(), newCarImages);
     }
 
     @Transactional

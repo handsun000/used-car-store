@@ -33,7 +33,8 @@ public class CarRepositoryImpl implements CarRepositoryCustom {
                         mileageBetween(condition.minMileage(), condition.maxMileage()),
                         fuelTypeEq(condition.fuelType()),
                         transmissionEq(condition.transmission()),
-                        car.status.eq(CarStatus.FOR_SALE))
+                        transmissionEq(condition.transmission()),
+                        statusesIn(condition.statuses()))
                 .orderBy(car.createdAt.desc())
                 .fetch();
 
@@ -86,5 +87,9 @@ public class CarRepositoryImpl implements CarRepositoryCustom {
 
     private BooleanExpression transmissionEq(Transmission transmission) {
         return transmission != null ? car.transmission.eq(transmission) : null;
+    }
+
+    private BooleanExpression statusesIn(List<CarStatus> statuses) {
+        return (statuses != null && !statuses.isEmpty()) ? car.status.in(statuses) : null;
     }
 }

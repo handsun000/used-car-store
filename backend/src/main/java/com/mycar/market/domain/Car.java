@@ -81,6 +81,25 @@ public class Car extends BaseTimeEntity { // 상속 추가
     // 연관관계 편의 메서드 (양방향 세팅)
     public void addImage(CarImage image) {
         this.images.add(image);
-        image.setCar(this); // CarImage에도 setCar 메서드가 필요해!
+        image.setCar(this);
+    }
+
+    public void updateImages(List<String> keptImageUrls, List<CarImage> newImages) {
+        // 1. Remove images that are not in keptImageUrls
+        // If keptImageUrls is null, it means remove all existing images (unless new
+        // ones strictly replace)
+        // Client should send empty list if no kept images.
+        if (keptImageUrls == null)
+            keptImageUrls = new ArrayList<>();
+
+        List<String> finalKeptImageUrls = keptImageUrls;
+        this.images.removeIf(img -> !finalKeptImageUrls.contains(img.getUrl()));
+
+        // 2. Add new images
+        if (newImages != null) {
+            for (CarImage newImage : newImages) {
+                addImage(newImage);
+            }
+        }
     }
 }

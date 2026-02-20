@@ -78,8 +78,8 @@ export default function Header() {
     const showWhiteBackground = !isMainPage || isScrolled || isMobileMenuOpen;
 
     const headerClass = showWhiteBackground
-        ? "fixed top-0 w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm text-gray-900 border-b border-gray-200"
-        : "fixed top-0 w-full z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10";
+        ? "fixed top-0 w-full z-40 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm text-gray-900 border-b border-gray-200"
+        : "fixed top-0 w-full z-40 transition-all duration-300 bg-transparent text-white border-b border-white/10";
 
     const logoClass = showWhiteBackground ? "text-blue-900" : "text-white";
     const logoAccentClass = showWhiteBackground ? "text-blue-500" : "text-white/80";
@@ -92,7 +92,7 @@ export default function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
-                    <Link href="/" className={`text-2xl font-bold tracking-tight ${logoClass} z-50 relative`}>
+                    <Link href="/" className={`text-2xl font-bold tracking-tight ${logoClass} z-40 relative`}>
                         Gen<span className={logoAccentClass}>Car</span>
                     </Link>
 
@@ -110,10 +110,10 @@ export default function Header() {
                     <div className="hidden md:flex items-center space-x-4">
                         {isLoggedIn && isAdmin && (
                             <Link
-                                href="/admin/register"
+                                href="/admin/manage"
                                 className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-colors border ${showWhiteBackground ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
                             >
-                                매물 등록
+                                매물 관리
                             </Link>
                         )}
 
@@ -145,7 +145,7 @@ export default function Header() {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center z-50 relative">
+                    <div className="md:hidden flex items-center z-40 relative">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className={`p-2 rounded-md focus:outline-none ${menuIconClass}`}
@@ -176,8 +176,8 @@ export default function Header() {
                     </Link>
                     <div className="border-t border-gray-100 my-2 pt-2">
                         {isLoggedIn && isAdmin && (
-                            <Link href="/admin/register" className={mobileLinkClass}>
-                                매물 등록
+                            <Link href="/admin/manage" className={mobileLinkClass}>
+                                매물 관리
                             </Link>
                         )}
                         {isLoggedIn ? (

@@ -45,6 +45,7 @@ export interface CarSearchCondition {
     maxMileage?: number;
     fuelType?: FuelType;
     transmission?: Transmission;
+    statuses?: CarStatus[];
 }
 
 export interface LoginRequest {

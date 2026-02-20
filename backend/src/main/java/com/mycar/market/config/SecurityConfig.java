@@ -65,7 +65,7 @@ public class SecurityConfig {
         // Use allowedOrigins from application.yml
         configuration.setAllowedOriginPatterns(java.util.Collections.singletonList("*"));
 
-        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
