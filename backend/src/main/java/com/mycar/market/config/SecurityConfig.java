@@ -52,15 +52,15 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins:http://localhost:3000}")
-    private String[] allowedOrigins;
+    @org.springframework.beans.factory.annotation.Value("#{'${app.cors.allowed-origins:http://localhost:3000}'.split(',')}")
+    private java.util.List<String> allowedOrigins;
 
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
 
         // Use allowedOrigins from application.yml
-        configuration.setAllowedOrigins(java.util.Arrays.asList(allowedOrigins));
+        configuration.setAllowedOrigins(allowedOrigins);
 
         configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.Collections.singletonList("*"));
