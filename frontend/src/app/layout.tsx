@@ -8,8 +8,37 @@ import PageContainer from '@/components/layout/PageContainer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MyCar Market',
-  description: 'Premium Used Car Marketplace',
+  metadataBase: new URL('https://gencar.co.kr'),
+  title: {
+    default: 'GenCar - 허위 매물 없는 진짜 중고차',
+    template: '%s | GenCar',
+  },
+  description: 'GenCar(젠카)는 허위 매물 없는 100% 실매물 중고차 거래 플랫폼입니다. 투명한 시세와 믿을 수 있는 품질을 경험하세요.',
+  openGraph: {
+    title: 'GenCar - 허위 매물 없는 진짜 중고차',
+    description: 'GenCar(젠카)는 허위 매물 없는 100% 실매물 중고차 거래 플랫폼입니다.',
+    url: 'https://gencar.co.kr',
+    siteName: 'GenCar (젠카)',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'Fa6vTSwNbyVdkBP0Bobgw0dHrlejCjh_52U6rneTaYw',
+    other: {
+      'naver-site-verification': '1e1f2b2e7c443c7e3b54472bddcec6aa40ae770d',
+    },
+  },
 };
 
 export default function RootLayout({
