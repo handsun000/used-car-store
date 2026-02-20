@@ -80,7 +80,7 @@ class CarControllerTest {
                                 com.mycar.market.domain.Transmission.AUTOMATIC,
                                 false, "Desc", null);
                 String requestJson = objectMapper.writeValueAsString(request);
-                MockMultipartFile carPart = new MockMultipartFile("car", "", "application/json",
+                MockMultipartFile carPart = new MockMultipartFile("carRequest", "", "application/json",
                                 requestJson.getBytes());
                 MockMultipartFile imagePart = new MockMultipartFile("images", "img.jpg", "image/jpeg",
                                 "data".getBytes());
@@ -106,7 +106,7 @@ class CarControllerTest {
                                 com.mycar.market.domain.Transmission.AUTOMATIC,
                                 false, "Desc", null);
                 String requestJson = objectMapper.writeValueAsString(request);
-                MockMultipartFile carPart = new MockMultipartFile("car", "", "application/json",
+                MockMultipartFile carPart = new MockMultipartFile("carRequest", "", "application/json",
                                 requestJson.getBytes());
 
                 // when & then
@@ -132,5 +132,73 @@ class CarControllerTest {
                                 .param("minPrice", "1000"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].brand").value("BMW"));
+        }
+
+        @Test
+        @DisplayName("차량 수정 - ADMIN 성공 (200)")
+        @WithMockUser(username = "admin", authorities = { "ROLE_ADMIN" })
+        void updateCar_Admin_Success() throws Exception {
+                // given
+                CarRequest request = new CarRequest(
+                                "BMW", "X5 Updated", 2023, 10000, 80000000L,
+                                com.mycar.market.domain.FuelType.GASOLINE,
+                                com.mycar.market.domain.Transmission.AUTOMATIC,
+                                false, "Desc", null);
+                String requestJson = objectMapper.writeValueAsString(request);
+                MockMultipartFile carPart = new MockMultipartFile("carRequest", "", "application/json",
+                                requestJson.getBytes());
+
+                // when & then
+                mockMvc.perform(multipart(HttpMethod.PUT, "/api/v1/cars/1")
+                                .file(carPart)
+                                .with(csrf()))
+                                .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("차량 수정 - USER 실패 (403)")
+        @WithMockUser(username = "user", authorities = { "ROLE_USER" })
+        void updateCar_User_Fail() throws Exception {
+                // given
+                CarRequest request = new CarRequest(
+                                "BMW", "X5 Updated", 2023, 10000, 80000000L,
+                                com.mycar.market.domain.FuelType.GASOLINE,
+                                com.mycar.market.domain.Transmission.AUTOMATIC,
+                                false, "Desc", null);
+                String requestJson = objectMapper.writeValueAsString(request);
+                MockMultipartFile carPart = new MockMultipartFile("carRequest", "", "application/json",
+                                requestJson.getBytes());
+
+                // when & then
+                mockMvc.perform(multipart(HttpMethod.PUT, "/api/v1/cars/1")
+                                .file(carPart)
+                                .with(csrf()))
+                                .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("차량 상태 변경 - ADMIN 성공 (200)")
+        @WithMockUser(username = "admin", authorities = { "ROLE_ADMIN" })
+        void updateCarStatus_Admin_Success() throws Exception {
+                // when & then
+                mockMvc.perform(
+                                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                                .patch("/api/v1/cars/1/status")
+                                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                                                .content("\"SOLD\"")
+                                                .with(csrf()))
+                                .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("차량 삭제 - ADMIN 성공 (204)")
+        @WithMockUser(username = "admin", authorities = { "ROLE_ADMIN" })
+        void deleteCar_Admin_Success() throws Exception {
+                // when & then
+                mockMvc.perform(
+                                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                                .delete("/api/v1/cars/1")
+                                                .with(csrf()))
+                                .andExpect(status().isNoContent());
         }
 }

@@ -39,4 +39,27 @@ public class CarController {
     public ResponseEntity<CarResponse> getCarDetail(@PathVariable Long id) {
         return ResponseEntity.ok(carService.getCarDetail(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(
+            @PathVariable Long id,
+            @RequestPart("carRequest") @Valid CarRequest request,
+            @RequestPart(value = "newImages", required = false) List<MultipartFile> newImages) {
+        carService.update(id, request, newImages);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Long id,
+            @RequestBody com.mycar.market.domain.CarStatus status) {
+        carService.updateStatus(id, status);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        carService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

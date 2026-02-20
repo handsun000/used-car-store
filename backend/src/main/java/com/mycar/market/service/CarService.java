@@ -58,4 +58,54 @@ public class CarService {
                 .orElseThrow(() -> new CarNotFoundException(id));
         return CarResponse.from(car);
     }
+
+    @Transactional
+    public void update(Long id, CarRequest request, List<MultipartFile> newImages) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
+
+        // 1. 기본 정보 수정
+        car.update(
+                request.brand(),
+                request.modelName(),
+                request.productionYear(),
+                request.mileage(),
+                request.price(),
+                request.fuelType(),
+                request.transmission(),
+                request.accidentHistory(),
+                request.description());
+
+        // 2. 이미지 처리 (단순화: 기존 이미지 유지 + 새 이미지 추가)
+        // 실제로는 기존 이미지를 삭제하거나 순서를 바꾸는 로직이 필요할 수 있음
+        if (newImages != null && !newImages.isEmpty()) {
+            for (MultipartFile file : newImages) {
+                String storedUrl = imageUploadService.uploadImage(file);
+                if (storedUrl != null) {
+                    com.mycar.market.domain.CarImage carImage = com.mycar.market.domain.CarImage.builder()
+                            .url(storedUrl)
+                            .isMain(false) // 추가된 이미지는 메인이 아님 (기존 메인 유지)
+                            .build();
+                    car.addImage(carImage);
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void updateStatus(Long id, com.mycar.market.domain.CarStatus status) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
+        car.updateStatus(status);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
+
+        // 연관된 이미지 삭제 로직이 필요하다면 여기에 추가 (Cloudinary 삭제 등)
+
+        carRepository.delete(car);
+    }
 }

@@ -34,3 +34,51 @@ export async function fetchCar(id: number): Promise<CarResponse> {
 
     return res.json();
 }
+
+export async function createCar(formData: FormData): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/cars`, {
+        method: 'POST',
+        body: formData,
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to create car');
+    }
+}
+
+export async function updateCar(id: number, formData: FormData): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/cars/${id}`, {
+        method: 'PUT',
+        body: formData,
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to update car');
+    }
+}
+
+export async function updateCarStatus(id: number, status: string): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/cars/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(status),
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to update car status');
+    }
+}
+
+export async function deleteCar(id: number): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/cars/${id}`, {
+        method: 'DELETE',
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to delete car');
+    }
+}
