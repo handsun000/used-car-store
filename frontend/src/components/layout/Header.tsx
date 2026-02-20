@@ -93,7 +93,7 @@ export default function Header() {
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
                     <Link href="/" className={`text-2xl font-bold tracking-tight ${logoClass} z-50 relative`}>
-                        MyCar<span className={logoAccentClass}>Market</span>
+                        Gen<span className={logoAccentClass}>Car</span>
                     </Link>
 
                     {/* Desktop Navigation */}
