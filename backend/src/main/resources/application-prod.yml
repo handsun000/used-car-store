@@ -18,3 +18,7 @@ spring:
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:https://used-car-store.vercel.app,http://localhost:3000,https://gencar.co.kr,https://www.gencar.co.kr}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000 # 1 day
