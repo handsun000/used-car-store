@@ -32,4 +32,4 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
