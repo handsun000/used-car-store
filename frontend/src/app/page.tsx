@@ -7,7 +7,7 @@ export default function HomePage() {
   const [isMuted, setIsMuted] = useState(true);
 
   return (
-    <div className="min-h-screen bg-black font-sans text-white overflow-hidden">
+    <main className="min-h-screen bg-black font-sans text-white overflow-hidden">
 
       {/* Hero Section */}
       <section className="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
@@ -42,6 +42,7 @@ export default function HomePage() {
           <div className="pt-8">
             <Link
               href="/buy"
+              aria-label="안전한 젠카 매물 둘러보기"
               className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               매물 보러가기
@@ -87,6 +88,6 @@ export default function HomePage() {
             animation: fadeInUp 1s ease-out forwards;
         }
       `}</style>
-    </div>
+    </main>
   );
 }

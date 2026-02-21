@@ -93,11 +93,11 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
     };
 
     // Style classes
-    const inputClass = "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 py-2 px-3 border bg-white text-gray-900 placeholder:text-gray-400 transition-all duration-200";
-    const labelClass = "block text-sm font-bold text-gray-700 mb-1";
+    const inputClass = "w-full rounded-lg border-slate-200 shadow-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 py-3 px-4 border bg-white text-slate-900 placeholder:text-slate-400 transition-all duration-200 focus:outline-none";
+    const labelClass = "block text-sm font-extrabold text-slate-800 mb-1.5";
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -277,11 +277,13 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4">
+            <div className="pt-6">
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                    className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl text-lg font-bold text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isLoading
+                            ? 'bg-blue-400 cursor-not-allowed opacity-70'
+                            : 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:-translate-y-0.5'
                         }`}
                 >
                     {isLoading ? '처리 중...' : buttonText}

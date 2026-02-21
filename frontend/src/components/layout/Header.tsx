@@ -91,9 +91,25 @@ export default function Header() {
         <header className={headerClass}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
-                    {/* Logo */}
-                    <Link href="/" className={`text-2xl font-bold tracking-tight ${logoClass} z-40 relative`}>
-                        Gen<span className={logoAccentClass}>Car</span>
+                    {/* Logo: Trust Blue Theme (CSS text logo) */}
+                    <Link
+                        href="/"
+                        className="group z-40 relative flex items-center text-2xl md:text-3xl font-sans"
+                    >
+                        <span
+                            className={`font-black tracking-[-0.05em] transition-colors duration-300 ${showWhiteBackground ? "text-slate-900" : "text-white"
+                                }`}
+                        >
+                            Gen
+                        </span>
+                        <span
+                            className={`font-semibold tracking-[-0.01em] transition-all duration-300 ${showWhiteBackground
+                                    ? "text-blue-600 group-hover:text-blue-500 group-hover:drop-shadow-[0_4px_10px_rgba(37,99,235,0.4)]"
+                                    : "text-blue-400 group-hover:text-blue-300 group-hover:drop-shadow-[0_4px_10px_rgba(96,165,250,0.4)]"
+                                }`}
+                        >
+                            Car
+                        </span>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -111,7 +127,7 @@ export default function Header() {
                         {isLoggedIn && isAdmin && (
                             <Link
                                 href="/admin/manage"
-                                className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-colors border ${showWhiteBackground ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
+                                className={`px-3 py-1.5 rounded-lg font-medium text-sm border transition-all duration-300 ${showWhiteBackground ? 'text-blue-600 border-blue-600 hover:bg-blue-50' : 'text-white border-white hover:bg-white/10'}`}
                             >
                                 매물 관리
                             </Link>
@@ -124,19 +140,19 @@ export default function Header() {
                                 </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className={`font-medium ${showWhiteBackground ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}
+                                    className={`font-medium transition-colors ${showWhiteBackground ? 'text-gray-500 hover:text-slate-900' : 'text-white/80 hover:text-white'}`}
                                 >
                                     로그아웃
                                 </button>
                             </>
                         ) : (
                             <>
-                                <Link href="/login" className={`font-medium ${showWhiteBackground ? 'text-gray-500 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}>
+                                <Link href="/login" className={`font-medium transition-colors ${showWhiteBackground ? 'text-gray-500 hover:text-slate-900' : 'text-white/80 hover:text-white'}`}>
                                     로그인
                                 </Link>
                                 <Link
                                     href="/signup"
-                                    className={`px-4 py-2 rounded-lg font-medium transition ${showWhiteBackground ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-900 hover:bg-gray-100'}`}
+                                    className={`px-4 py-2 rounded-xl font-bold transition-all duration-300 ${showWhiteBackground ? 'bg-blue-600 text-white hover:bg-blue-500 hover:shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:-translate-y-0.5' : 'bg-white text-blue-900 hover:bg-gray-100 hover:shadow-[0_4px_14px_rgba(255,255,255,0.4)]'}`}
                                 >
                                     회원가입
                                 </Link>
