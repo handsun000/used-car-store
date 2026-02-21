@@ -162,10 +162,17 @@ export default function BuyPage() {
                                                 <div className="w-full h-full flex items-center justify-center text-gray-300">No Image</div>
                                             )}
                                             <div className="absolute top-0 right-0 p-4">
-                                                <span className="bg-white/90 backdrop-blur-sm px-2 py-1 text-xs font-bold uppercase tracking-wide text-black rounded-md">
+                                                <span className="bg-white/90 backdrop-blur-sm px-2 py-1 text-xs font-bold uppercase tracking-wide text-black rounded-md shadow-sm">
                                                     {car.productionYear}
                                                 </span>
                                             </div>
+                                            {car.status === 'RESERVED' && (
+                                                <div className="absolute top-0 left-0 p-4 z-10">
+                                                    <span className="bg-red-500/90 backdrop-blur-sm px-3 py-1 text-xs font-bold tracking-wide text-white rounded-md shadow-sm">
+                                                        예약중
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 

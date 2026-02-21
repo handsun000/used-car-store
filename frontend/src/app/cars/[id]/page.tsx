@@ -105,6 +105,13 @@ export default function CarDetailPage() {
                                         No Image
                                     </div>
                                 )}
+                                {car.status === 'RESERVED' && (
+                                    <div className="absolute top-4 left-4 z-10">
+                                        <span className="bg-red-500/95 shadow-md backdrop-blur-sm px-4 py-2 text-sm font-bold tracking-wide text-white rounded-lg">
+                                            예약중 차량
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Thumbnails */}
@@ -115,8 +122,8 @@ export default function CarDetailPage() {
                                             key={idx}
                                             onClick={() => setSelectedImage(img)}
                                             className={`aspect-w-1 aspect-h-1 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img
-                                                    ? 'border-blue-600 ring-2 ring-blue-100'
-                                                    : 'border-transparent hover:border-gray-300'
+                                                ? 'border-blue-600 ring-2 ring-blue-100'
+                                                : 'border-transparent hover:border-gray-300'
                                                 }`}
                                         >
                                             <img
