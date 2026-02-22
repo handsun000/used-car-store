@@ -10,15 +10,15 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.gencar.co.kr'),
   title: {
-    default: '젠카 | 100% 실매물 정직한 중고차 by 손승진 대표',
+    default: '젠카 | 100% 실매물 부산 사상 중고차 by 손승진 대표',
     template: '%s | 젠카 (GenCar)',
   },
-  description: '허위매물 없는 부산 사상중고차의 기준, 젠카(GenCar). 손승진 대표가 직접 검증한 100% 실매물만 정직하게 판매합니다.',
+  description: '허위매물 없는 정직한 중고차 젠카(GenCar). 손승진 대표가 직접 검증한 100% 실매물 부산 사상 중고차를 안전하게 거래하세요.',
   openGraph: {
-    title: '젠카 | 100% 실매물 정직한 중고차 by 손승진 대표',
-    description: '허위매물 없는 부산 사상중고차의 기준, 젠카(GenCar). 손승진 대표가 직접 검증한 100% 실매물만 정직하게 판매합니다.',
+    title: '젠카 | 100% 실매물 부산 사상 중고차 by 손승진 대표',
+    description: '허위매물 없는 정직한 중고차 젠카(GenCar). 손승진 대표가 직접 검증한 100% 실매물 부산 사상 중고차를 안전하게 거래하세요.',
     url: 'https://www.gencar.co.kr',
-    siteName: 'GenCar (젠카)',
+    siteName: '젠카',
     locale: 'ko_KR',
     type: 'website',
   },
@@ -50,6 +50,20 @@ export default function RootLayout({
     <html lang="ko">
       {/* Force light mode styles: bg-white for background, text-gray-900 for text */}
       <body className={`${inter.className} min-h-screen flex flex-col bg-white text-gray-900`}>
+        {/* JSON-LD for Google Site Name Parsing */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "젠카",
+              "alternateName": ["GenCar", "젠카 중고차"],
+              "url": "https://www.gencar.co.kr/"
+            })
+          }}
+        />
+
         <Header />
 
         {/* Main Content with smart padding */}

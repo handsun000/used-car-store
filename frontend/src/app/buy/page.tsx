@@ -68,8 +68,8 @@ export default function BuyPage() {
     return (
         <>
             {/* Minimal standard <title> injection since this is a 'use client' component limiting full Metadata API usage */}
-            <title>내차사기 | 젠카 (GenCar) 실매물 검색</title>
-            <meta name="description" content="부산 사상중고차 젠카에서 원하는 조건의 100% 실매물 중고차를 검색해보세요. 손승진 대표가 보증합니다." />
+            <title>젠카 | 100% 실매물 중고차 검색</title>
+            <meta name="description" content="부산 사상 중고차 젠카에서 원하는 조건의 100% 실매물 중고차를 검색해보세요. 손승진 대표가 보증합니다." />
 
             <main className="min-h-screen bg-slate-50 pt-24 pb-20 font-sans text-slate-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -157,7 +157,7 @@ export default function BuyPage() {
                                                 {car.images && car.images.length > 0 ? (
                                                     <img
                                                         src={car.images[0]}
-                                                        alt={`${car.productionYear}년식 ${car.brand} ${car.modelName} 실매물 중고차 대표 썸네일`}
+                                                        alt={`${car.brand} ${car.modelName} 실매물 중고차 - 젠카`}
                                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                                         onError={(e) => {
                                                             (e.target as HTMLImageElement).style.display = 'none';

@@ -23,7 +23,7 @@ export default function CarCard({ car }: CarCardProps) {
                 {car.images.length > 0 ? (
                     // Note: In real app, use next/image with configured remotePatterns. 
                     // For now, using standard img tag if domain not configured or placeholder
-                    <img src={car.images[0]} alt={car.modelName} className="object-cover w-full h-full group-hover:scale-105 transition duration-500" />
+                    <img src={car.images[0]} alt={`${car.brand} ${car.modelName} 실매물 중고차 - 젠카`} className="object-cover w-full h-full group-hover:scale-105 transition duration-500" />
                 ) : (
                     <div className="flex items-center justify-center h-full text-slate-400 bg-slate-100">
                         No Image

@@ -58,7 +58,7 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                                 {selectedImage ? (
                                     <img
                                         src={selectedImage}
-                                        alt={`${car.brand} ${car.modelName} 실매물 중고차 전면 및 측면 외관`}
+                                        alt={`${car.brand} ${car.modelName} 실매물 중고차 전면 및 측면 - 젠카`}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                 ) : (
@@ -89,7 +89,7 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                                     >
                                         <img
                                             src={img}
-                                            alt={`${car.brand} ${car.modelName} 세부 이미지 ${idx + 1}`}
+                                            alt={`${car.brand} ${car.modelName} 실매물 중고차 세부 이미지 ${idx + 1} - 젠카`}
                                             className="w-full h-full object-cover"
                                         />
                                     </button>

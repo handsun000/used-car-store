@@ -30,12 +30,12 @@ export default function HomePage() {
         <div className="relative z-20 text-center px-4 max-w-4xl mx-auto space-y-8 animate-fadeInUp">
           <div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 leading-tight">
-              Trust & Honest <br />
-              <span className="text-blue-500">GenCar</span>
+              허위매물 없는 정직한 중고차 <br />
+              <span className="text-blue-500">젠카</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 font-light tracking-wide">
-              부산 사상중고차의 자존심. <br className="md:hidden" />
-              손승진 대표가 약속하는 100% 실매물.
+              부산 사상 중고차의 자존심. <br className="md:hidden" />
+              손승진 대표가 약속하는 100% 실매물 중고차.
             </p>
           </div>
 
