@@ -29,7 +29,7 @@ function generateMetaFromCar(car: any, id: string): Metadata {
     const title = `${car.brand} ${car.modelName} 실매물 중고차 | 젠카 (GenCar)`;
     const description = `손승진 대표가 보증하는 100% 실매물! ${car.productionYear}년식 ${car.brand} ${car.modelName}. 가격: ${car.price}만원. 주행거리: ${car.mileage.toLocaleString()}km. 무사고 여부: ${car.accidentHistory ? '사고 이력 있음' : '무사고'}. 안전하게 구매하세요.`;
     const images = car.images && car.images.length > 0 ? [car.images[0]] : [];
-    const canonicalUrl = `https://gencar.co.kr/cars/${id}`;
+    const canonicalUrl = `https://www.gencar.co.kr/cars/${id}`;
 
     return {
         title,

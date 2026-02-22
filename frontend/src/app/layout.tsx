@@ -8,7 +8,7 @@ import PageContainer from '@/components/layout/PageContainer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://gencar.co.kr'),
+  metadataBase: new URL('https://www.gencar.co.kr'),
   title: {
     default: '젠카 | 100% 실매물 정직한 중고차 by 손승진 대표',
     template: '%s | 젠카 (GenCar)',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '젠카 | 100% 실매물 정직한 중고차 by 손승진 대표',
     description: '허위매물 없는 부산 사상중고차의 기준, 젠카(GenCar). 손승진 대표가 직접 검증한 100% 실매물만 정직하게 판매합니다.',
-    url: 'https://gencar.co.kr',
+    url: 'https://www.gencar.co.kr',
     siteName: 'GenCar (젠카)',
     locale: 'ko_KR',
     type: 'website',
