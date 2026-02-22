@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CarResponse, FuelType, Transmission } from '@/types';
+import { getOptimizedImageUrl } from '@/lib/cloudinary';
 
 interface CarDetailClientProps {
     car: CarResponse;
@@ -57,7 +58,7 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                             <div className="aspect-w-4 aspect-h-3 w-full h-[400px] lg:h-[500px] bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 mb-4 relative group">
                                 {selectedImage ? (
                                     <img
-                                        src={selectedImage}
+                                        src={getOptimizedImageUrl(selectedImage, 1200)}
                                         alt={`${car.brand} ${car.modelName} 실매물 중고차 전면 및 측면 - 젠카`}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
@@ -88,7 +89,7 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                                             }`}
                                     >
                                         <img
-                                            src={img}
+                                            src={getOptimizedImageUrl(img, 400)}
                                             alt={`${car.brand} ${car.modelName} 실매물 중고차 세부 이미지 ${idx + 1} - 젠카`}
                                             className="w-full h-full object-cover"
                                         />

@@ -2,6 +2,8 @@ import { Car } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { getOptimizedImageUrl } from '@/lib/cloudinary';
+
 interface CarCardProps {
     car: Car;
 }
@@ -21,9 +23,8 @@ export default function CarCard({ car }: CarCardProps) {
         <Link href={`/cars/${car.id}`} className="group block bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 overflow-hidden">
             <div className="relative h-48 w-full bg-slate-100">
                 {car.images.length > 0 ? (
-                    // Note: In real app, use next/image with configured remotePatterns. 
-                    // For now, using standard img tag if domain not configured or placeholder
-                    <img src={car.images[0]} alt={`${car.brand} ${car.modelName} 실매물 중고차 - 젠카`} className="object-cover w-full h-full group-hover:scale-105 transition duration-500" />
+                    // Direct Edge CDN fetch bypassing Vercel Image Optimization
+                    <img src={getOptimizedImageUrl(car.images[0], 600)} alt={`${car.brand} ${car.modelName} 실매물 중고차 - 젠카`} className="object-cover w-full h-full group-hover:scale-105 transition duration-500" />
                 ) : (
                     <div className="flex items-center justify-center h-full text-slate-400 bg-slate-100">
                         No Image

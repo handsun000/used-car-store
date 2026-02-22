@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
+import axios from 'axios';
 import { CarRequest, FuelType, Transmission } from '@/types';
 
 interface CarFormProps {
@@ -74,26 +76,83 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
         setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgressText, setUploadProgressText] = useState('');
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation: If no images at all
         if (existingImages.length === 0 && newImages.length === 0) {
             alert('최소 1장의 이미지를 등록해주세요.');
             return;
         }
 
-        // Update formData with the potentially modified existingImages list
-        const finalFormData = {
-            ...formData,
-            imageUrls: existingImages
-        };
+        try {
+            setIsUploading(true);
+            let finalImageUrls = [...existingImages];
 
-        await onSubmit(finalFormData, newImages);
+            // 1. Check if there are new images to upload to Cloudinary directly
+            if (newImages.length > 0) {
+                const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+                const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+                if (!cloudName || !uploadPreset) {
+                    alert('환경 변수(NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET)가 설정되지 않았습니다.');
+                    setIsUploading(false);
+                    return;
+                }
+
+                // Configuration for browser-image-compression
+                const compressionOptions = {
+                    maxSizeMB: 1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                };
+
+                for (let i = 0; i < newImages.length; i++) {
+                    const originalFile = newImages[i];
+                    setUploadProgressText(`이미지 압축 중... (${i + 1}/${newImages.length})`);
+
+                    // Compress Image
+                    const compressedFile = await imageCompression(originalFile, compressionOptions);
+
+                    setUploadProgressText(`클라우드 업로드 중... (${i + 1}/${newImages.length})`);
+
+                    // Upload directly to Cloudinary
+                    const formData = new FormData();
+                    formData.append('file', compressedFile);
+                    formData.append('upload_preset', uploadPreset);
+
+                    const uploadRes = await axios.post(
+                        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+                        formData
+                    );
+
+                    finalImageUrls.push(uploadRes.data.secure_url);
+                }
+            }
+
+            setUploadProgressText('차량 정보 저장 중...');
+
+            const finalFormData = {
+                ...formData,
+                imageUrls: finalImageUrls
+            };
+
+            // Pass empty file array to onSubmit since images are already uploaded via Cloudinary URL
+            await onSubmit(finalFormData, []);
+
+        } catch (error) {
+            console.error("Direct Upload Failed:", error);
+            alert('이미지 업로드 중 오류가 발생했습니다. 네트워크 상태나 업로드 프리셋 설정을 확인해주세요.');
+        } finally {
+            setIsUploading(false);
+            setUploadProgressText('');
+        }
     };
 
     // Style classes
-    const inputClass = "w-full rounded-lg border-slate-200 shadow-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 py-3 px-4 border bg-white text-slate-900 placeholder:text-slate-400 transition-all duration-200 focus:outline-none";
+    const inputClass = "w-full rounded-lg border-slate-200 shadow-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 py-3 px-4 border bg-white text-slate-900 placeholder:text-slate-400 transition-all duration-200 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400";
     const labelClass = "block text-sm font-extrabold text-slate-800 mb-1.5";
 
     return (
@@ -276,17 +335,34 @@ export default function CarForm({ initialData, onSubmit, isLoading, buttonText }
                 <p className="text-xs text-gray-500">* 첫 번째 이미지가 대표 이미지가 됩니다.</p>
             </div>
 
-            {/* Submit Button */}
-            <div className="pt-6">
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 pt-6 border-t border-slate-100 mt-8">
+                <button
+                    type="button"
+                    className="px-6 py-3 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-bold disabled:opacity-50"
+                    onClick={() => window.history.back()}
+                    disabled={isUploading || isLoading}
+                >
+                    취소
+                </button>
                 <button
                     type="submit"
-                    disabled={isLoading}
-                    className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl text-lg font-bold text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isLoading
-                            ? 'bg-blue-400 cursor-not-allowed opacity-70'
-                            : 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:-translate-y-0.5'
-                        }`}
+                    disabled={isUploading || isLoading}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 hover:shadow-[0_4px_14px_rgba(37,99,235,0.4)] transition-all duration-300 font-extrabold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-75 disabled:cursor-not-allowed flex items-center"
                 >
-                    {isLoading ? '처리 중...' : buttonText}
+                    {isUploading ? (
+                        <>
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            {uploadProgressText}
+                        </>
+                    ) : isLoading ? (
+                        '저장 중...'
+                    ) : (
+                        buttonText
+                    )}
                 </button>
             </div>
         </form>

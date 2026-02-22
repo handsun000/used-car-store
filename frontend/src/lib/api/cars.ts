@@ -8,10 +8,13 @@ export const registerCar = async (data: CarRequest, images: File[]) => {
     const carBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
     formData.append('carRequest', carBlob);
 
-    // 'images' part as Files
-    images.forEach((image) => {
-        formData.append('images', image);
-    });
+    // Only append images if there are any trailing local files (e.g. fallback).
+    // Mostly, images should be uploaded directly to Cloudinary now.
+    if (images && images.length > 0) {
+        images.forEach((image) => {
+            formData.append('images', image);
+        });
+    }
 
     const response = await api.post('/cars', formData, {
         headers: {
