@@ -83,8 +83,8 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                                         onClick={() => setSelectedImage(img)}
                                         aria-label={`${car.brand} ${car.modelName} 외부 전경 및 실내 상세 뷰 ${idx + 1}`}
                                         className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedImage === img
-                                                ? 'border-blue-600 shadow-md scale-100'
-                                                : 'border-transparent hover:border-blue-300 hover:scale-105 opacity-80 hover:opacity-100'
+                                            ? 'border-blue-600 shadow-md scale-100'
+                                            : 'border-transparent hover:border-blue-300 hover:scale-105 opacity-80 hover:opacity-100'
                                             }`}
                                     >
                                         <img
@@ -147,13 +147,13 @@ export default function CarDetailClient({ car }: CarDetailClientProps) {
                             <div className="mt-auto pt-6 border-t border-slate-100">
                                 <button
                                     onClick={handlePurchaseInquiry}
-                                    aria-label={`${car.brand} ${car.modelName} 차량 안심 구매 문의하기`}
+                                    aria-label={`${car.brand} ${car.modelName} 차량 구매 문의`}
                                     className="w-full bg-blue-600 text-white text-lg font-extrabold py-5 rounded-xl hover:bg-blue-500 transition-all duration-300 hover:shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center tracking-wide"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
-                                    안심 구매 문의하기
+                                    구매 문의
                                 </button>
                                 <p className="text-center text-xs text-slate-400 font-medium mt-4">
                                     손승진 대표가 허위매물 여부를 직접 100% 검증한 매물입니다.

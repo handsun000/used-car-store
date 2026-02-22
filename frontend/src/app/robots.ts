@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/private/',
         },
-        sitemap: 'https://gencar.co.kr/sitemap.xml',
+        sitemap: 'https://www.gencar.co.kr/sitemap.xml',
     };
 }

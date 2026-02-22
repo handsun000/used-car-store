@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://gencar.co.kr';
+    const baseUrl = 'https://www.gencar.co.kr';
     return [
         {
             url: baseUrl,
