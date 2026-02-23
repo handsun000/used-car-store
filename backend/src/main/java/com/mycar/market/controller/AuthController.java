@@ -19,8 +19,27 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        System.out.println(request.email());
+        System.out.println(request.username());
         System.out.println(request.password());
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/email/send")
+    public ResponseEntity<String> sendVerificationEmail(
+            @RequestBody com.mycar.market.dto.EmailVerificationRequest request) {
+        authService.sendVerificationCode(request.email());
+        return ResponseEntity.ok("Verification email sent");
+    }
+
+    @PostMapping("/email/verify")
+    public ResponseEntity<Boolean> verifyEmailCode(@RequestBody com.mycar.market.dto.EmailVerificationRequest request) {
+        boolean isValid = authService.verifyCode(request.email(), request.code());
+        return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody com.mycar.market.dto.SignupRequest request) {
+        authService.signup(request);
+        return ResponseEntity.ok("User registered successfully");
     }
 }

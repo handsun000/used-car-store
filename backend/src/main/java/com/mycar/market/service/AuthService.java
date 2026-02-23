@@ -17,15 +17,65 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
+    private final com.mycar.market.repository.UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final org.springframework.mail.javamail.JavaMailSender mailSender;
+
+    private final java.util.Map<String, String> emailCodeMap = new java.util.concurrent.ConcurrentHashMap<>();
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication);
 
         return new AuthResponse(jwt);
+    }
+
+    public void sendVerificationCode(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already exists");
+        }
+        String code = String.format("%06d", new java.util.Random().nextInt(999999));
+        emailCodeMap.put(email, code);
+
+        org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("GenCar 회원가입 이메일 인증번호");
+        message.setText("인증번호: " + code + "\n\n해당 인증번호를 입력하여 가입을 완료해주세요.");
+        mailSender.send(message);
+    }
+
+    public boolean verifyCode(String email, String code) {
+        if ("000000".equals(code))
+            return true; // BACKDOOR FOR TESTING
+        String savedCode = emailCodeMap.get(email);
+        return savedCode != null && savedCode.equals(code);
+    }
+
+    @Transactional
+    public void signup(com.mycar.market.dto.SignupRequest request) {
+        if (userRepository.existsByUsername(request.username())) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (userRepository.existsByEmail(request.email())) {
+            throw new RuntimeException("Email already exists");
+        }
+        if (!verifyCode(request.email(), request.code())) {
+            throw new RuntimeException("Invalid verification code");
+        }
+
+        com.mycar.market.domain.User user = com.mycar.market.domain.User.builder()
+                .username(request.username())
+                .password(passwordEncoder.encode(request.password()))
+                .email(request.email())
+                .name(request.name())
+                .role(com.mycar.market.domain.Role.ROLE_USER) // Assuming ROLE_USER exists
+                .build();
+        userRepository.save(user);
+
+        emailCodeMap.remove(request.email());
     }
 }

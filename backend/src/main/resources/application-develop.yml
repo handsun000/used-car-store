@@ -22,3 +22,12 @@ spring:
 app:
   cors:
     allowed-origins: http://localhost:3000
+
+jwt:
+  secret: dummy_secret_key_for_local_development_replace_this_with_a_secure_one
+
+cloudinary:
+  cloud-name: dummy
+  api-key: dummy
+  api-secret: dummy
+

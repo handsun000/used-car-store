@@ -49,8 +49,21 @@ export interface CarSearchCondition {
 }
 
 export interface LoginRequest {
-    email: string;
+    username: string;
     password: string;
+}
+
+export interface SignupRequest {
+    username: string;
+    password: string;
+    email: string;
+    name: string;
+    code: string;
+}
+
+export interface EmailVerificationRequest {
+    email: string;
+    code?: string;
 }
 
 export interface AuthResponse {

@@ -6,7 +6,7 @@ import { login } from '@/lib/api/auth';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await login({ email, password });
+            const response = await login({ username, password });
             localStorage.setItem('accessToken', response.accessToken);
             // Dispatch custom event for Navbar sync
             window.dispatchEvent(new Event('auth-change'));
@@ -45,19 +45,19 @@ export default function LoginPage() {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="-space-y-px rounded-md shadow-sm">
                         <div className="mb-4">
-                            <label htmlFor="email-address" className="sr-only">
-                                이메일 주소
+                            <label htmlFor="username" className="sr-only">
+                                아이디
                             </label>
                             <input
-                                id="email-address"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
+                                id="username"
+                                name="username"
+                                type="text"
+                                autoComplete="username"
                                 required
                                 className="relative block w-full rounded-md border-0 py-2.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                                placeholder="이메일 주소"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="아이디"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
                         <div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
                     </div>
 
                     <div className="text-center text-sm">
-                        <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
+                        <a href="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
                             계정이 없으신가요? 회원가입
                         </a>
                     </div>

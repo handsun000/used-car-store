@@ -23,6 +23,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(unique = true) // nullable = true is default
     private String email;
 
     @Column(nullable = false)
@@ -36,7 +39,8 @@ public class User extends BaseTimeEntity implements UserDetails {
     private Role role;
 
     @Builder
-    public User(String email, String password, String name, Role role) {
+    public User(String username, String email, String password, String name, Role role) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -51,7 +55,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

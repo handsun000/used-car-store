@@ -18,9 +18,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 console.warn(`[Auth Guard] Unauthorized access attempt to ${pathname}. Redirecting to /login.`);
                 setIsAuthorized(false);
                 router.replace('/login');
-            } else {
-                // Authenticated
-                setIsAuthorized(true);
+                return;
+            }
+
+            try {
+                // Decode token and check for ROLE_ADMIN
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                const payload = JSON.parse(jsonPayload);
+                const authorities = payload.auth || '';
+
+                if (authorities.includes('ROLE_ADMIN')) {
+                    setIsAuthorized(true);
+                } else {
+                    console.warn(`[Auth Guard] Forbidden access attempt to ${pathname}. Not an admin. Redirecting to home.`);
+                    setIsAuthorized(false);
+                    router.replace('/');
+                }
+            } catch (e) {
+                console.error('Failed to parse token in Auth Guard', e);
+                setIsAuthorized(false);
+                router.replace('/login');
             }
         }
     }, [router, pathname]);
