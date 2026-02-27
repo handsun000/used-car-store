@@ -20,6 +20,12 @@ public class ImageUploadService {
 
     public String uploadImage(MultipartFile file) {
         try {
+            // Security: Strictly check MIME type to prevent malicious uploads
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Invalid file type. Only images are allowed.");
+            }
+
             // Generate a unique filename
             String fileName = UUID.randomUUID().toString();
 

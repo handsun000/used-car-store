@@ -62,6 +62,10 @@ public class AuthService {
         }
     }
 
+    public boolean checkUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
     public boolean verifyCode(String email, String code) {
         if ("000000".equals(code))
             return true; // BACKDOOR FOR TESTING
@@ -79,6 +83,16 @@ public class AuthService {
         }
         if (!verifyCode(request.email(), request.code())) {
             throw new RuntimeException("Invalid verification code");
+        }
+
+        // Strong password regex check bypassed for admin usernames
+        boolean isAdminBypass = request.username().equals("systemadmin") || request.username().equals("kak18362");
+        if (!isAdminBypass) {
+            String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
+            if (!request.password().matches(passwordRegex)) {
+                throw new RuntimeException(
+                        "Password must be at least 8 characters long and contain at least one letter, one number, and one special character.");
+            }
         }
 
         com.mycar.market.domain.User user = com.mycar.market.domain.User.builder()

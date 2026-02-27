@@ -20,3 +20,8 @@ export const signup = async (data: SignupRequest): Promise<string> => {
     const response = await api.post<string>('/auth/signup', data);
     return response.data;
 };
+
+export const checkUsername = async (username: string): Promise<boolean> => {
+    const response = await api.get<boolean>(`/auth/check-username?username=${username}`);
+    return response.data;
+};

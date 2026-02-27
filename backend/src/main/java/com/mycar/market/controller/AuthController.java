@@ -23,6 +23,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @org.springframework.web.bind.annotation.GetMapping("/check-username")
+    public ResponseEntity<Boolean> checkUsername(
+            @org.springframework.web.bind.annotation.RequestParam("username") String username) {
+        boolean exists = authService.checkUsername(username);
+        return ResponseEntity.ok(exists);
+    }
+
     @PostMapping("/email/send")
     public ResponseEntity<String> sendVerificationEmail(
             @RequestBody com.mycar.market.dto.EmailVerificationRequest request) {
