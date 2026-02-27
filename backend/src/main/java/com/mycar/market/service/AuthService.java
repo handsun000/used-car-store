@@ -41,11 +41,25 @@ public class AuthService {
         String code = String.format("%06d", new java.util.Random().nextInt(999999));
         emailCodeMap.put(email, code);
 
-        org.springframework.mail.SimpleMailMessage message = new org.springframework.mail.SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("GenCar 회원가입 이메일 인증번호");
-        message.setText("인증번호: " + code + "\n\n해당 인증번호를 입력하여 가입을 완료해주세요.");
-        mailSender.send(message);
+        try {
+            jakarta.mail.internet.MimeMessage message = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper = new org.springframework.mail.javamail.MimeMessageHelper(
+                    message, false, java.nio.charset.StandardCharsets.UTF_8.name());
+
+            helper.setTo(email);
+            helper.setSubject("[GenCar] 회원가입을 위한 인증번호가 도착했습니다 🚗");
+
+            org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource(
+                    "templates/email-auth.html");
+            String htmlTemplate = resource.getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+            String htmlContent = htmlTemplate.replace("${code}", code);
+
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("인증 이메일 발송에 실패했습니다.", e);
+        }
     }
 
     public boolean verifyCode(String email, String code) {
