@@ -25,34 +25,44 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long validityInMilliseconds;
+    @Value("${jwt.access-expiration}")
+    private long accessValidityInMilliseconds;
+
+    @Value("${jwt.refresh-expiration}")
+    private long refreshValidityInMilliseconds;
 
     private Key key;
 
     @PostConstruct
     protected void init() {
-        // Ensure the key is strong enough for HS256
-        byte[] keyBytes = Base64.getDecoder().decode(Base64.getEncoder().encodeToString(secretKey.getBytes()));
-        // If the secret is plain text, just using getBytes() often works with
-        // Keys.hmacShaKeyFor if enough bit length.
-        // But better to strictly follow specs. Use Keys.hmacShaKeyFor which handles it.
-        // We will assume 'secretKey' is just a long string.
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication) {
         String username = authentication.getName();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date validity = new Date(now.getTime() + accessValidityInMilliseconds);
 
         return Jwts.builder()
                 .setSubject(username)
                 .claim("auth", authorities)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        String username = authentication.getName();
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)

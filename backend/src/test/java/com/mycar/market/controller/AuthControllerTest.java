@@ -44,9 +44,11 @@ class AuthControllerTest {
         // given
         LoginRequest request = new LoginRequest("test@test.com", "password");
 
-        AuthResponse response = new AuthResponse("test-access-token", "Bearer");
+        java.util.Map<String, String> tokens = new java.util.HashMap<>();
+        tokens.put("accessToken", "test-access-token");
+        tokens.put("refreshToken", "test-refresh-token");
 
-        given(authService.login(any(LoginRequest.class))).willReturn(response);
+        given(authService.login(any(LoginRequest.class))).willReturn(tokens);
 
         // when & then
         mockMvc.perform(post("/api/v1/auth/login")
@@ -55,6 +57,8 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value("test-access-token"))
-                .andExpect(jsonPath("$.tokenType").value("Bearer"));
+                .andExpect(jsonPath("$.tokenType").value("Bearer"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie().exists("refreshToken"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie().value("refreshToken", "test-refresh-token"));
     }
 }

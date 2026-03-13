@@ -30,7 +30,14 @@ server:
   port: ${PORT:8080}
 
 jwt:
-  expiration: 86400000 # 1 day
+  access-expiration: 900000 # 15 minutes
+  refresh-expiration: 604800000 # 7 days
+  secret: ${JWT_SECRET}
+
+app:
+  auth:
+    admin-users: systemadmin,kak18362
+    test-code: ""
 
 file:
   upload-dir: uploads

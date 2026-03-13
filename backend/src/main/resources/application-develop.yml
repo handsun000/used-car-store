@@ -19,12 +19,14 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
+jwt:
+  secret: dummy_secret_key_for_local_development_replace_this_with_a_secure_one
+
 app:
   cors:
     allowed-origins: http://localhost:3000
-
-jwt:
-  secret: dummy_secret_key_for_local_development_replace_this_with_a_secure_one
+  auth:
+    test-code: "000000"
 
 cloudinary:
   cloud-name: dummy

@@ -1,104 +1,53 @@
 import { CarResponse, CarSearchCondition } from '@/types';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+import api from './axios';
 
 export async function fetchCars(condition?: CarSearchCondition): Promise<CarResponse[]> {
-    const params = new URLSearchParams();
+    const params: Record<string, any> = {};
     if (condition) {
         Object.entries(condition).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
                 if (key === 'statuses' && Array.isArray(value)) {
-                    value.forEach((status) => params.append('statuses', status));
+                    params['statuses'] = value.join(',');
                 } else {
-                    params.append(key, value.toString());
+                    params[key] = value;
                 }
             }
         });
     }
 
-    const res = await fetch(`${API_BASE_URL}/cars/search?${params.toString()}`, {
-        cache: 'no-store',
-    });
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch cars');
-    }
-
-    return res.json();
+    const { data } = await api.get<CarResponse[]>('/cars/search', { params });
+    return data;
 }
 
 export async function fetchCar(id: number): Promise<CarResponse> {
-    const res = await fetch(`${API_BASE_URL}/cars/${id}`, {
-        cache: 'no-store',
-    });
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch car');
-    }
-
-    return res.json();
-}
-
-
-function getAuthHeader(): Record<string, string> {
-    const token = localStorage.getItem('accessToken');
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
+    const { data } = await api.get<CarResponse>(`/cars/${id}`);
+    return data;
 }
 
 export async function createCar(formData: FormData): Promise<void> {
-    const res = await fetch(`${API_BASE_URL}/cars`, {
-        method: 'POST',
+    await api.post('/cars', formData, {
         headers: {
-            ...getAuthHeader(),
+            'Content-Type': 'multipart/form-data',
         },
-        body: formData,
     });
-
-    if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to create car');
-    }
 }
 
 export async function updateCar(id: number, formData: FormData): Promise<void> {
-    const res = await fetch(`${API_BASE_URL}/cars/${id}`, {
-        method: 'PUT',
+    await api.put(`/cars/${id}`, formData, {
         headers: {
-            ...getAuthHeader(),
+            'Content-Type': 'multipart/form-data',
         },
-        body: formData,
     });
-
-    if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to update car');
-    }
 }
 
 export async function updateCarStatus(id: number, status: string): Promise<void> {
-    const res = await fetch(`${API_BASE_URL}/cars/${id}/status`, {
-        method: 'PATCH',
+    await api.patch(`/cars/${id}/status`, JSON.stringify(status), {
         headers: {
             'Content-Type': 'application/json',
-            ...getAuthHeader(),
         },
-        body: JSON.stringify(status),
     });
-
-    if (!res.ok) {
-        throw new Error('Failed to update car status');
-    }
 }
 
 export async function deleteCar(id: number): Promise<void> {
-    const res = await fetch(`${API_BASE_URL}/cars/${id}`, {
-        method: 'DELETE',
-        headers: {
-            ...getAuthHeader(),
-        },
-    });
-
-    if (!res.ok) {
-        throw new Error('Failed to delete car');
-    }
+    await api.delete(`/cars/${id}`);
 }

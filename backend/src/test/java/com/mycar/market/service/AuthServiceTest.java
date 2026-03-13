@@ -30,6 +30,9 @@ class AuthServiceTest {
     @Mock
     JwtTokenProvider tokenProvider;
 
+    @Mock
+    com.mycar.market.repository.RefreshTokenRepository refreshTokenRepository;
+
     @Test
     @DisplayName("로그인 성공")
     void login_Success() {
@@ -38,14 +41,20 @@ class AuthServiceTest {
 
         Authentication authentication = mock(Authentication.class);
         given(authenticationManager.authenticate(any())).willReturn(authentication);
-        given(tokenProvider.createToken(authentication)).willReturn("test-token");
+        given(tokenProvider.createAccessToken(authentication)).willReturn("test-access-token");
+        given(tokenProvider.createRefreshToken(authentication)).willReturn("test-refresh-token");
+        
+        com.mycar.market.domain.RefreshToken mockRt = com.mycar.market.domain.RefreshToken.builder()
+                .username("test@test.com")
+                .build();
+        given(refreshTokenRepository.findByUsername(any())).willReturn(java.util.Optional.of(mockRt));
 
         // when
-        AuthResponse response = authService.login(request);
+        java.util.Map<String, String> response = authService.login(request);
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.accessToken()).isEqualTo("test-token");
-        assertThat(response.tokenType()).isEqualTo("Bearer");
+        assertThat(response.get("accessToken")).isEqualTo("test-access-token");
+        assertThat(response.get("refreshToken")).isEqualTo("test-refresh-token");
     }
 }

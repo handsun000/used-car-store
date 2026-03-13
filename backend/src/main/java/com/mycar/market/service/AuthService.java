@@ -11,6 +11,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mycar.market.domain.RefreshToken;
+import com.mycar.market.repository.RefreshTokenRepository;
+import org.springframework.beans.factory.annotation.Value;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -18,20 +26,84 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final com.mycar.market.repository.UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final org.springframework.mail.javamail.JavaMailSender mailSender;
+
+    @Value("${app.auth.admin-users}")
+    private List<String> adminUsers;
+
+    @Value("${app.auth.test-code:}")
+    private String testCode;
+
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpirationMs;
 
     private final java.util.Map<String, String> emailCodeMap = new java.util.concurrent.ConcurrentHashMap<>();
 
     @Transactional
-    public AuthResponse login(LoginRequest request) {
+    public Map<String, String> login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.createToken(authentication);
+        String accessToken = tokenProvider.createAccessToken(authentication);
+        String refreshTokenStr = tokenProvider.createRefreshToken(authentication);
 
-        return new AuthResponse(jwt);
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(request.username())
+                .orElse(RefreshToken.builder()
+                        .username(request.username())
+                        .build());
+        
+        refreshToken.updateToken(refreshTokenStr, LocalDateTime.now().plusNanos(refreshExpirationMs * 1_000_000));
+        refreshTokenRepository.save(refreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshTokenStr);
+
+        return tokens;
+    }
+
+    @Transactional
+    public Map<String, String> refresh(String refreshTokenStr) {
+        if (!tokenProvider.validateToken(refreshTokenStr)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenStr)
+                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+
+        if (refreshToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.delete(refreshToken);
+            throw new RuntimeException("Refresh token was expired. Please make a new signin request");
+        }
+
+        String username = refreshToken.getUsername();
+        com.mycar.market.domain.User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // 권한 정보 로드
+        org.springframework.security.core.userdetails.UserDetails userDetails = 
+                org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .authorities(user.getRole().name())
+                        .build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+
+        String newAccessToken = tokenProvider.createAccessToken(authentication);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        return tokens;
+    }
+
+    @Transactional
+    public void logout(String username) {
+        refreshTokenRepository.deleteByUsername(username);
     }
 
     public void sendVerificationCode(String email) {
@@ -67,8 +139,8 @@ public class AuthService {
     }
 
     public boolean verifyCode(String email, String code) {
-        if ("000000".equals(code))
-            return true; // BACKDOOR FOR TESTING
+        if (testCode != null && !testCode.isEmpty() && testCode.equals(code))
+            return true;
         String savedCode = emailCodeMap.get(email);
         return savedCode != null && savedCode.equals(code);
     }
@@ -85,8 +157,7 @@ public class AuthService {
             throw new RuntimeException("Invalid verification code");
         }
 
-        // Strong password regex check bypassed for admin usernames
-        boolean isAdminBypass = request.username().equals("systemadmin") || request.username().equals("kak18362");
+        boolean isAdminBypass = adminUsers != null && adminUsers.contains(request.username());
         if (!isAdminBypass) {
             String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
             if (!request.password().matches(passwordRegex)) {
